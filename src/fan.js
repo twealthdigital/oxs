@@ -2,10 +2,8 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 export const LEVELS = [0, 9, 18, 30];
-const R = 1.78;
-const HEAD_Y = 3.1;
-const FAN_H = 4.95;
-const FAN_W = 3.7;
+const R = 1.78; // guard radius in world units
+const WALL_Z = -2.3; // wall the fan "hangs" in front of, catches the shadows
 
 const Y = new THREE.Vector3(0, 1, 0);
 const dummy = new THREE.Object3D();
@@ -32,61 +30,75 @@ export function createFan({ canvas, isMobile, reduced }) {
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.75));
   renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.95;
+  scene.environmentIntensity = 0.55;
   pmrem.dispose();
 
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-  camera.position.set(0, 0, 12);
+  const camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
+  camera.position.set(0, 0, 14);
 
-  const key = new THREE.DirectionalLight(0xffffff, 2.4);
-  key.position.set(-4, 6, 8);
-  const rim = new THREE.PointLight(0xff3b30, 140, 0, 2);
-  rim.position.set(3, 3, -4);
-  scene.add(key, rim);
+  // everything lives in one group that is moved to the fan's screen position
+  const fan = new THREE.Group();
+  scene.add(fan);
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.6);
+  key.position.set(-5, 6, 9);
+  key.castShadow = true;
+  const sc = key.shadow.camera;
+  sc.left = -5.5; sc.right = 5.5; sc.top = 5.5; sc.bottom = -5.5; sc.near = 1; sc.far = 40;
+  key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+  key.shadow.bias = -0.0006;
+  key.shadow.radius = 5;
+  key.shadow.normalBias = 0.02;
+  const rim = new THREE.PointLight(0x4d86ff, 25, 0, 2);
+  rim.position.set(4, 3, -3);
+  fan.add(key, key.target, rim);
+
+  // wall: invisible except for the soft shadow of the guard and blades
+  const wall = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 60),
+    new THREE.ShadowMaterial({ color: 0x0a1740, opacity: 0.24 })
+  );
+  wall.position.z = WALL_Z;
+  wall.receiveShadow = true;
+  fan.add(wall);
 
   const plastic = new THREE.MeshPhysicalMaterial({
-    color: 0x101012, roughness: 0.38, metalness: 0.1,
-    clearcoat: 1, clearcoatRoughness: 0.18, side: THREE.DoubleSide,
+    color: 0x1a2342, roughness: 0.42, metalness: 0.1,
+    clearcoat: 1, clearcoatRoughness: 0.2, side: THREE.DoubleSide,
   });
-  const steel = new THREE.MeshStandardMaterial({ color: 0xf4f4f6, roughness: 0.28, metalness: 0.95 });
-  const red = new THREE.MeshPhysicalMaterial({
-    color: 0xe6342b, roughness: 0.3, metalness: 0.05,
+  const steel = new THREE.MeshStandardMaterial({ color: 0x2a3350, roughness: 0.4, metalness: 0.7 });
+  const blue = new THREE.MeshPhysicalMaterial({
+    color: 0x1f5bff, roughness: 0.3, metalness: 0.05,
     clearcoat: 0.8, clearcoatRoughness: 0.2, side: THREE.DoubleSide,
   });
   const bladeMat = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff, roughness: 0.22, metalness: 0,
-    clearcoat: 0.6, clearcoatRoughness: 0.2, side: THREE.DoubleSide,
+    color: 0x0c1330, roughness: 0.55, metalness: 0.05,
+    clearcoat: 0.3, clearcoatRoughness: 0.4, side: THREE.DoubleSide,
   });
 
-  const fan = new THREE.Group();
-  scene.add(fan);
-  const head = new THREE.Group();
-  head.position.set(0, HEAD_Y, 0.6);
-  fan.add(head);
+  const castAll = (o) => o.traverse((m) => { if (m.isMesh) m.castShadow = true; });
 
-  const seg = isMobile ? 40 : 72;
-  const base = new THREE.Mesh(
-    new THREE.LatheGeometry(
-      pts([[0, 0], [1.38, 0], [1.42, 0.04], [1.42, 0.12], [1.3, 0.2], [1.0, 0.26], [0.6, 0.34], [0.32, 0.5], [0.2, 0.66], [0.13, 0.82], [0.1, 0.92]]),
-      seg
-    ),
-    plastic
-  );
-  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.025, 8, seg).rotateX(Math.PI / 2), red);
-  baseRing.position.y = 0.2;
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.9, 20), steel);
-  pole.position.y = 1.8;
+  // stand: runs straight down from behind the head and out of the hero
+  const stand = new THREE.Group();
+  stand.position.z = -0.6;
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 14, 20), steel);
+  pole.position.y = -7.35;
   const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.26, 24), plastic);
-  collar.position.y = 1.5;
+  collar.position.y = -1.6;
   const joint = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 16), plastic);
-  joint.position.y = 2.74;
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.6, 24), plastic);
-  neck.position.y = 2.95;
-  fan.add(base, baseRing, pole, collar, joint, neck);
+  joint.position.y = -0.36;
+  stand.add(pole, collar, joint);
+  stand.visible = !isMobile; // on phones the fan floats, no pole through the content
+  fan.add(stand);
+
+  const head = new THREE.Group();
+  fan.add(head);
 
   const housing = new THREE.Mesh(
     new THREE.LatheGeometry(
@@ -95,10 +107,10 @@ export function createFan({ canvas, isMobile, reduced }) {
     ).rotateX(Math.PI / 2),
     plastic
   );
-  const trim = new THREE.Mesh(new THREE.TorusGeometry(0.455, 0.028, 8, 48), red);
+  const trim = new THREE.Mesh(new THREE.TorusGeometry(0.455, 0.028, 8, 48), blue);
   trim.position.z = -0.1;
   for (const sx of [-1, 1]) {
-    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.2, 20).rotateZ(Math.PI / 2), red);
+    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.2, 20).rotateZ(Math.PI / 2), blue);
     knob.position.set(sx * 0.64, 0, -0.6);
     head.add(knob);
   }
@@ -133,11 +145,10 @@ export function createFan({ canvas, isMobile, reduced }) {
   }
 
   const blades = new THREE.Group();
-  blades.name = 'Blades';
   blades.position.z = 0.06;
   const hub = new THREE.Mesh(
     new THREE.LatheGeometry(pts([[0, -0.14], [0.22, -0.14], [0.3, -0.08], [0.3, 0.1], [0.25, 0.2], [0.14, 0.3], [0, 0.34]]), 32).rotateX(Math.PI / 2),
-    red
+    blue
   );
   blades.add(hub);
   const bladeGeo = makeBlade();
@@ -149,27 +160,28 @@ export function createFan({ canvas, isMobile, reduced }) {
   }
   head.add(blades);
 
+  // soft motion-blur disc that fades in with speed
   const disc = new THREE.Mesh(
     new THREE.CircleGeometry(1.62, 48),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: 0x1f5bff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
   );
   disc.position.z = 0.06;
   head.add(disc);
 
-  const wireGeo = new THREE.CylinderGeometry(0.018, 0.018, 1, 6);
-  const strutGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 8);
+  const wireR = 0.011;
+  const wireGeo = new THREE.CylinderGeometry(wireR, wireR, 1, 6);
+  const strutGeo = new THREE.CylinderGeometry(0.026, 0.026, 1, 8);
 
   function ring(r, z, tube, mat) {
-    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, isMobile ? 48 : 96), mat);
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, isMobile ? 64 : 128), mat);
     m.position.z = z;
     return m;
   }
 
-  function buildGuard(name, zC, zR, spokes, radii, rings, offset) {
+  function buildGuard(zC, zR, spokes, radii, rings, offset) {
     const g = new THREE.Group();
-    g.name = name;
     const zAt = (r) => zR + (zC - zR) * (1 - (r / R) * (r / R));
-    rings.forEach((r) => g.add(ring(r, zAt(r), 0.018, steel)));
+    rings.forEach((r) => g.add(ring(r, zAt(r), wireR, steel)));
     const segs = radii.length - 1;
     const mesh = new THREE.InstancedMesh(wireGeo, steel, spokes * segs);
     mesh.frustumCulled = false;
@@ -192,17 +204,16 @@ export function createFan({ canvas, isMobile, reduced }) {
     return g;
   }
 
-  const front = buildGuard('Front_Guard', 0.95, 0.28, isMobile ? 14 : 20, [0.22, 0.55, 0.95, 1.35, 1.65, R], [0.55, 0.95, 1.35, 1.65], 0);
-  const back = buildGuard('Back_Guard', -0.7, -0.28, isMobile ? 10 : 14, [0.62, 0.95, 1.35, 1.65, R], [0.95, 1.35, 1.65], 0.12);
-  const badge = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.07, 32).rotateX(Math.PI / 2), red);
+  const front = buildGuard(0.95, 0.28, isMobile ? 16 : 26, [0.22, 0.55, 0.95, 1.35, 1.65, R], [0.55, 0.95, 1.35, 1.65], 0);
+  const back = buildGuard(-0.7, -0.28, isMobile ? 10 : 16, [0.62, 0.95, 1.35, 1.65, R], [0.95, 1.35, 1.65], 0.12);
+  const badge = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.07, 32).rotateX(Math.PI / 2), blue);
   badge.position.z = 0.945;
   const badgeRing = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.02, 8, 32), steel);
   badgeRing.position.z = 0.945;
   head.add(front, back, badge, badgeRing);
 
   const rimGroup = new THREE.Group();
-  rimGroup.name = 'Guard_Rim';
-  rimGroup.add(ring(R, 0.28, 0.055, plastic), ring(R, -0.28, 0.055, plastic));
+  rimGroup.add(ring(R, 0.28, 0.05, plastic), ring(R, -0.28, 0.05, plastic));
   const struts = new THREE.InstancedMesh(strutGeo, plastic, 8);
   struts.frustumCulled = false;
   for (let i = 0; i < 8; i++) {
@@ -213,11 +224,16 @@ export function createFan({ canvas, isMobile, reduced }) {
   rimGroup.add(struts);
   head.add(rimGroup);
 
+  castAll(head);
+  castAll(stand);
+  disc.castShadow = false;
+
   const layout = { x: 0, y: 0, r: 0, w: 0, h: 0 };
-  const cfg = { y: -0.55, tilt: -0.05 };
+  const cfg = { y: 0, tilt: 0 };
   const ptr = { x: 0, y: 0 };
   let omega = 0;
   let target = 0;
+  let sweep = 0;
   let dirty = true;
 
   if (!isMobile && !reduced) {
@@ -240,41 +256,36 @@ export function createFan({ canvas, isMobile, reduced }) {
     const H = canvas.clientHeight;
     if (!W || !H) return;
     renderer.setSize(W, H, false);
-    camera.aspect = W / H;
-    camera.updateProjectionMatrix();
-    const h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
-    const w = h * camera.aspect;
     const mobile = W < 769;
 
-    let heightPx, cx, topPx;
+    // diameter of the guard on screen, and where its centre sits
+    let diam, cx, cy;
     if (mobile) {
-      heightPx = Math.min(H * 0.26, W * 0.6);
-      cx = W * 0.74;
-      topPx = 66;
+      diam = W * 0.92;
+      cx = W * 0.8;
+      cy = H * 0.27;
     } else {
-      topPx = 84;
-      const avail = H - topPx - (76 + H * 0.035 + 18);
-      heightPx = Math.min(avail, (W * 0.44) / (FAN_W / FAN_H));
-      topPx += (avail - heightPx) / 2;
-      cx = W * 0.73;
+      diam = Math.min(H * 0.94, W * 0.54);
+      cx = W * 0.5;
+      cy = H * 0.5;
     }
+    const sPx = diam / (2 * R); // pixels per world unit
 
-    const pxPerWorld = H / h;
-    const sPx = (heightPx * 0.94) / FAN_H;
-    const bottomPx = topPx + heightPx * 0.97;
-    fan.scale.setScalar(sPx / pxPerWorld);
-    fan.position.set((cx / W - 0.5) * w, (0.5 - bottomPx / H) * h, 0);
+    // frame the camera so one world unit is exactly sPx pixels at the fan's depth
+    const visH = H / sPx;
+    camera.aspect = W / H;
+    camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(visH / 2 / camera.position.z));
+    camera.updateProjectionMatrix();
+    fan.position.set((cx - W / 2) / sPx, (H / 2 - cy) / sPx, 0);
 
     layout.x = cx;
-    layout.y = bottomPx - HEAD_Y * sPx;
-    layout.r = R * sPx;
+    layout.y = cy;
+    layout.r = diam / 2;
     layout.w = W;
     layout.h = H;
 
-    cfg.y = mobile ? -0.7 : -0.55;
-    cfg.tilt = mobile ? 0.38 : -0.05;
-    fan.rotation.y = cfg.y;
-    head.rotation.x = cfg.tilt;
+    cfg.y = mobile ? -0.5 : 0;
+    cfg.tilt = mobile ? 0.3 : 0;
     dirty = true;
     if (reduced) render();
   }
@@ -285,10 +296,14 @@ export function createFan({ canvas, isMobile, reduced }) {
     blades.rotation.z -= omega * dt;
     disc.material.opacity = Math.min(0.14, (omega / LEVELS[3]) * 0.14);
 
-    const dy = cfg.y + ptr.x * 0.14 - fan.rotation.y;
+    // a real fan sweeps slowly side to side while it runs
+    sweep += dt * 0.55 * Math.min(1, omega / LEVELS[1]);
+    const sweepAmt = Math.sin(sweep) * 0.12 * Math.min(1, omega / LEVELS[1]);
+
+    const dy = cfg.y + ptr.x * 0.12 + sweepAmt - head.rotation.y;
     const dx = cfg.tilt + ptr.y * 0.05 - head.rotation.x;
     const k = Math.min(1, dt * 3);
-    fan.rotation.y += dy * k;
+    head.rotation.y += dy * k;
     head.rotation.x += dx * k;
 
     if (omega > 0 || Math.abs(dx) + Math.abs(dy) > 0.0004 || dirty) {

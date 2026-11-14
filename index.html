@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
   <link rel="icon" href="data:," />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,14 +12,14 @@
 </head>
 <body>
   <header class="header">
-    <a class="logo glitch" href="#" data-text="OXs" aria-label="OXs">OXs</a>
+    <a class="logo" href="#" aria-label="OXs">OXs</a>
     <nav class="nav">
-      <a href="#"><span class="hg" data-text="Product">Product</span></a>
-      <a href="#"><span class="hg" data-text="Specs">Specs</span></a>
-      <a href="#"><span class="hg" data-text="Reviews">Reviews</span></a>
-      <a href="#"><span class="hg" data-text="Support">Support</span></a>
+      <a href="#">Product</a>
+      <a href="#">Specs</a>
+      <a href="#">Reviews</a>
+      <a href="#">Support</a>
     </nav>
-    <a class="btn btn--red" href="#"><span class="hg" data-text="Buy now">Buy now</span></a>
+    <a class="btn btn--blue" href="#">Buy now</a>
   </header>
 
   <main class="hero" id="hero">
@@ -27,24 +28,27 @@
       <path d="M-50 400 C 220 300, 420 500, 700 380 S 1020 320, 1250 420" />
       <path d="M-50 580 C 180 500, 400 660, 660 560 S 1000 500, 1250 600" />
     </svg>
-    <div class="hero__glow"></div>
-    <canvas id="fan-canvas"></canvas>
+    <div class="hero__tint"></div>
+    <canvas id="fan-canvas" aria-hidden="true"></canvas>
     <div class="streaks" id="streaks"></div>
 
     <div class="hero__content">
-      <h1 class="headline" aria-label="Blow everything away.">
-        <span class="line" data-wind data-split>Blow</span>
-        <span class="line line--red" data-wind data-split>everything</span>
-        <span class="line" data-wind data-split>away.</span>
-      </h1>
-      <p class="lede" data-wind>The fan that gets the whole room moving. Pick a speed and feel the page react.</p>
-      <div class="cta">
-        <a class="btn btn--red" data-wind href="#"><span class="hg" data-text="Shop OXs">Shop OXs</span></a>
-        <a class="btn" data-wind href="#"><span class="hg" data-text="See specs">See specs</span></a>
+      <div class="col col--left">
+        <h1 class="headline" aria-label="Blow everything away.">
+          <span class="line" data-wind data-split>Blow</span>
+          <span class="line line--blue" data-wind data-split>everything</span>
+          <span class="line" data-wind data-split>away.</span>
+        </h1>
+        <p class="lede" data-wind>The fan that gets the whole room moving. Pick a speed and feel the page react.</p>
+        <div class="cta">
+          <a class="btn btn--blue" data-wind href="#">Shop OXs</a>
+          <a class="btn btn--ghost" data-wind href="#">See specs</a>
+        </div>
       </div>
-      <div class="cards">
-        <div class="card" data-wind><b><span class="hg" data-text="3 speeds">3 speeds</span></b><span>Breeze, wind, storm</span></div>
-        <div class="card" data-wind><b><span class="hg" data-text="Low noise">Low noise</span></b><span>Loud look, quiet motor</span></div>
+
+      <div class="col col--right">
+        <div class="card" data-wind><b>3 speeds</b><span>Breeze, wind, storm</span></div>
+        <div class="card" data-wind><b>Low noise</b><span>Loud look, quiet motor</span></div>
       </div>
     </div>
 
