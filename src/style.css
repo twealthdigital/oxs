@@ -159,23 +159,26 @@ body { overflow-x: hidden; }
 
 @media (max-width: 768px) {
   :root { --h: 64px; --fan-op: .85; }
-  :root[data-theme='dark'] { --fan-op: .9; }
+  :root[data-theme='dark'] { --fan-op: .42; }
   .logo { font-size: 34px; }
   .btn { padding: 13px 22px; font-size: 16px; }
   .btn--ghost { padding: 11px 20px; }
   .hero__tint { background: radial-gradient(circle at 72% 40%, rgba(var(--glow), .13), transparent 60%); }
 
-  /* nav: a taskbar docked flush to the bottom of the screen */
-  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; gap: 0; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)); border-radius: 22px 22px 0 0; border-width: 2px 0 0; box-shadow: 0 -8px 22px rgba(var(--glow), .1); justify-content: space-around; }
+  /* nav: at rest, no bar of its own: the deep page colour sits behind it and fades upward (like the header).
+     once the page scrolls it detaches into a stand-alone floating bar */
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; gap: 0; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)); border-radius: 0; border: 2px solid transparent; background: transparent; box-shadow: none; justify-content: space-around;
+    transition: left .4s cubic-bezier(.6,0,.2,1), right .4s cubic-bezier(.6,0,.2,1), bottom .4s cubic-bezier(.6,0,.2,1), border-radius .4s ease, background-color .4s ease, border-color .4s ease, box-shadow .4s ease; }
+  :root.is-scrolled .nav { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 6px 8px; border-radius: 26px; background: var(--surface); border-color: var(--line); box-shadow: 0 3px 0 var(--line), 0 10px 26px rgba(var(--glow), .18); }
   .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 8px 4px 7px; border-radius: 18px; font-size: 12px; font-weight: 600; }
   .nav .ic { display: block; width: 22px; height: 22px; }
   .nav__pill { border-radius: 18px; }
 
   /* soft page-coloured fade rising from the bottom, so the fan never competes with the controls */
   body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; height: var(--fade-h, 40svh); pointer-events: none;
-    background: linear-gradient(to top, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .92) 35%, rgba(var(--bg-rgb), .5) 70%, rgba(var(--bg-rgb), 0) 100%);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    -webkit-mask-image: linear-gradient(to top, #000 45%, transparent 100%); mask-image: linear-gradient(to top, #000 45%, transparent 100%); }
+    background: linear-gradient(to top, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 1) 24%, rgba(var(--bg-rgb), .8) 48%, rgba(var(--bg-rgb), .4) 76%, rgba(var(--bg-rgb), 0) 100%);
+    transition: opacity .35s ease; }
+  :root.is-scrolled body::after { opacity: 0; }
 
   .hero__content { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 7svh; padding: calc(var(--h) + 8svh) 7vw 170px; }
   .col--left { max-width: 100%; width: 100%; }
@@ -198,6 +201,8 @@ body { overflow-x: hidden; }
   .stat__label { font-size: 13px; font-weight: 500; color: var(--ink); }
 
   .knob { --k: 88px; position: fixed; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); z-index: 8; }
+  :root.is-scrolled .knob, :root.is-scrolled .theme { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+  .knob, .theme { transition: bottom .4s cubic-bezier(.6,0,.2,1); }
   .knob__lbl { font-size: 10px; }
   .theme { left: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); width: 76px; height: 40px; }
   .theme__thumb { width: 30px; height: 30px; }

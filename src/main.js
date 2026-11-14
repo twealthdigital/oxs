@@ -139,3 +139,15 @@ function loop(now) {
 }
 if (reduced) fan.update(0);
 else requestAnimationFrame(loop);
+
+// mobile: once the page scrolls past the first screen's top, the bottom nav detaches into a floating bar
+let navTimer;
+function onScroll() {
+  const on = scrollY > 40;
+  if (on === root.classList.contains('is-scrolled')) return;
+  root.classList.toggle('is-scrolled', on);
+  clearTimeout(navTimer);
+  navTimer = setTimeout(snap, 450);
+}
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
