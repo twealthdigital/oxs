@@ -28,7 +28,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout, fac
     alpha: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : face ? 1.25 : 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : face ? 1.25 : 1.5));
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -51,7 +51,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout, fac
   key.castShadow = true;
   const sc = key.shadow.camera;
   sc.left = -5.5; sc.right = 5.5; sc.top = 5.5; sc.bottom = -5.5; sc.near = 1; sc.far = 40;
-  key.shadow.mapSize.set(isMobile || face ? 1024 : 2048, isMobile || face ? 1024 : 2048);
+  key.shadow.mapSize.set(1024, 1024); // the shadow is soft, so 1024 looks the same and costs a quarter
   key.shadow.bias = -0.0006;
   key.shadow.radius = 5;
   key.shadow.normalBias = 0.02;

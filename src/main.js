@@ -24,6 +24,8 @@ const fan = {
 const fanCanvas = document.getElementById('fan-canvas');
 fanCanvas.style.transition = 'opacity .8s ease';
 fanCanvas.style.opacity = '0';
+let fanDone;
+const fanReady = new Promise((res) => (fanDone = res));
 import('./fan.js').then((m) => {
   realFan = m.createFan({ canvas: fanCanvas, isMobile, reduced, layout: fanLayout });
   realFan.setLevel(fanLevel);
@@ -31,7 +33,8 @@ import('./fan.js').then((m) => {
   if (reduced) realFan.update(0);
   wind.measure();
   fanCanvas.style.opacity = '';
-});
+  fanDone();
+}).catch(() => fanDone());
 
 const wind = createWind({ layout: fan.layout, isMobile, reduced, getFacing: fan.getFacing });
 wind.measure();
@@ -155,17 +158,33 @@ addEventListener('load', setFade);
 addEventListener('resize', setFade);
 
 // count-up stats
-document.querySelectorAll('[data-count]').forEach((el) => {
+function startCounts() {
+  document.querySelectorAll('[data-count]').forEach((el) => {
   const to = Number(el.dataset.count);
   const dec = Number(el.dataset.dec || 0);
   if (reduced) return void (el.textContent = to.toFixed(dec));
-  const t0 = performance.now() + 250;
+  const t0 = performance.now() + 150;
   const run = (now) => {
     const p = Math.min(1, Math.max(0, (now - t0) / 1800));
     el.textContent = (to * (1 - Math.pow(1 - p, 3))).toFixed(dec);
     if (p < 1) requestAnimationFrame(run);
   };
   requestAnimationFrame(run);
+});
+}
+
+
+// loading screen: shows for about a second, then fades once the fan and fonts are ready
+const loaderEl = document.getElementById('loader');
+const MIN_MS = 1000;
+Promise.race([
+  Promise.all([fanReady, document.fonts.ready, new Promise((r) => setTimeout(r, Math.max(0, MIN_MS - performance.now())))]),
+  new Promise((r) => setTimeout(r, 2800)),
+]).then(() => {
+  loaderEl.classList.add('done');
+  root.classList.remove('loading');
+  setTimeout(() => loaderEl.remove(), 600);
+  startCounts();
 });
 
 let timer;
@@ -233,5 +252,10 @@ function onScroll() {
   clearTimeout(navTimer);
   navTimer = setTimeout(snap, 450);
 }
-addEventListener('scroll', onScroll, { passive: true });
+let scrollTick = false;
+addEventListener('scroll', () => {
+  if (scrollTick) return;
+  scrollTick = true;
+  requestAnimationFrame(() => { scrollTick = false; onScroll(); });
+}, { passive: true });
 onScroll();
