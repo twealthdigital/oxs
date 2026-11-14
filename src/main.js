@@ -12,29 +12,54 @@ const wind = createWind({ layout: fan.layout, isMobile, reduced });
 wind.measure();
 document.fonts.ready.then(() => wind.measure());
 
-const buttons = [...document.querySelectorAll('.speed button')];
-buttons.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const level = Number(btn.dataset.level);
-    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-    fan.setLevel(level);
-    wind.setLevel(level);
-  });
-});
+// rotary knob: each press turns it a quarter clockwise: OFF -> 1 -> 2 -> 3 -> OFF
+const wrap = document.getElementById('knob-wrap');
+const knob = document.getElementById('knob');
+const cap = document.getElementById('knob-cap');
+const NAMES = ['off', 'speed 1', 'speed 2', 'speed 3'];
+let turn = 0;
 
+function applyTurn() {
+  const level = turn % 4;
+  cap.style.setProperty('--r', `${-135 + 90 * turn}deg`);
+  wrap.dataset.level = level;
+  knob.setAttribute('aria-label', `Fan speed: ${NAMES[level]}. Press to change.`);
+  fan.setLevel(level);
+  wind.setLevel(level);
+}
+knob.addEventListener('click', () => {
+  turn += 1;
+  applyTurn();
+});
 addEventListener('keydown', (e) => {
-  if (['0', '1', '2', '3'].includes(e.key)) buttons[Number(e.key)].click();
+  if (!['0', '1', '2', '3'].includes(e.key)) return;
+  turn += (Number(e.key) - (turn % 4) + 4) % 4;
+  applyTurn();
+});
+applyTurn();
+
+// count-up stats
+document.querySelectorAll('[data-count]').forEach((el) => {
+  const to = Number(el.dataset.count);
+  const dec = Number(el.dataset.dec || 0);
+  if (reduced) return void (el.textContent = to.toFixed(dec));
+  const t0 = performance.now() + 250;
+  const run = (now) => {
+    const p = Math.min(1, Math.max(0, (now - t0) / 1800));
+    el.textContent = (to * (1 - Math.pow(1 - p, 3))).toFixed(dec);
+    if (p < 1) requestAnimationFrame(run);
+  };
+  requestAnimationFrame(run);
 });
 
 let timer;
-const onResize = () => {
+addEventListener('resize', () => {
   clearTimeout(timer);
   timer = setTimeout(() => {
     fan.resize();
     wind.measure();
   }, 150);
-};
-addEventListener('resize', onResize);
+});
 addEventListener('load', () => wind.measure());
 
 let last = performance.now();

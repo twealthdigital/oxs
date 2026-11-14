@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
   <link rel="icon" href="data:," />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,13 +13,13 @@
 <body>
   <header class="header">
     <a class="logo" href="#" aria-label="OXs">OXs</a>
-    <nav class="nav">
-      <a href="#">Product</a>
-      <a href="#">Specs</a>
-      <a href="#">Reviews</a>
-      <a href="#">Support</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg><span>Product</span></a>
+      <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Specs</span></a>
+      <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>Reviews</span></a>
+      <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Support</span></a>
     </nav>
-    <a class="btn btn--blue" href="#">Buy now</a>
+    <a class="btn btn--blue" href="#"><span>Buy now</span></a>
   </header>
 
   <main class="hero" id="hero">
@@ -34,30 +34,37 @@
 
     <div class="hero__content">
       <div class="col col--left">
-        <h1 class="headline" aria-label="Blow everything away.">
-          <span class="line" data-wind data-split>Blow</span>
-          <span class="line line--blue" data-wind data-split>everything</span>
-          <span class="line" data-wind data-split>away.</span>
+        <h1 class="headline" aria-label="Cool air, for every room.">
+          <span class="line" data-wind data-split>Cool air,</span>
+          <span class="line line--blue" data-wind data-split>for every</span>
+          <span class="line" data-wind data-split>room.</span>
         </h1>
-        <p class="lede" data-wind>The fan that gets the whole room moving. Pick a speed and feel the page react.</p>
+        <p class="lede" data-wind>Stand, desk and tower fans with quiet motors and three real speeds, delivered to your door.</p>
         <div class="cta">
-          <a class="btn btn--blue" data-wind href="#">Shop OXs</a>
-          <a class="btn btn--ghost" data-wind href="#">See specs</a>
+          <a class="btn btn--blue" data-wind href="#"><span>Shop fans</span></a>
+          <a class="btn btn--ghost" data-wind href="#"><span>Compare models</span></a>
         </div>
       </div>
 
       <div class="col col--right">
-        <div class="card" data-wind><b>3 speeds</b><span>Breeze, wind, storm</span></div>
-        <div class="card" data-wind><b>Low noise</b><span>Loud look, quiet motor</span></div>
+        <div class="stat" data-wind><b class="num"><span data-count="48">0</span><i>k+</i></b><span class="stat__label">Fans delivered</span></div>
+        <div class="stat" data-wind><b class="num"><span data-count="4.9" data-dec="1">0</span><i>/5</i></b><span class="stat__label">Average rating</span></div>
+        <div class="stat" data-wind><b class="num"><span data-count="24">0</span><i>h</i></b><span class="stat__label">Dispatch time</span></div>
       </div>
     </div>
 
-    <div class="speed" role="group" aria-label="Fan speed">
-      <span class="speed__label">Speed</span>
-      <button class="key" data-level="0" aria-pressed="true"><i class="led"></i><b>OFF</b></button>
-      <button class="key" data-level="1" aria-pressed="false"><i class="led"></i><b>1</b></button>
-      <button class="key" data-level="2" aria-pressed="false"><i class="led"></i><b>2</b></button>
-      <button class="key" data-level="3" aria-pressed="false"><i class="led"></i><b>3</b></button>
+    <div class="knob" id="knob-wrap" data-level="0">
+      <svg class="knob__ring" viewBox="0 0 200 200" aria-hidden="true">
+        <defs><path id="ring" d="M100,100 m-84,0 a84,84 0 1,1 168,0 a84,84 0 1,1 -168,0" /></defs>
+        <text><textPath href="#ring" textLength="522" lengthAdjust="spacing">CONTROL • CONTROL • CONTROL • CONTROL •</textPath></text>
+      </svg>
+      <span class="knob__lbl" style="--a:-135deg" data-l="0">OFF</span>
+      <span class="knob__lbl" style="--a:-45deg" data-l="1">1</span>
+      <span class="knob__lbl" style="--a:45deg" data-l="2">2</span>
+      <span class="knob__lbl" style="--a:135deg" data-l="3">3</span>
+      <button class="knob__btn" id="knob" aria-label="Fan speed: off. Press to change.">
+        <span class="knob__cap" id="knob-cap"><i class="knob__mark"></i></span>
+      </button>
     </div>
   </main>
 

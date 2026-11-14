@@ -2,10 +2,10 @@ const POWER = [0, 0.35, 0.68, 1];
 const STREAKS = { desktop: [0, 8, 16, 28], mobile: [0, 3, 6, 9] };
 
 export const SETTINGS = {
-  swingDeg: 9,
-  skewDeg: 7,
-  pushPx: 26,
-  letterDeg: 14,
+  swingDeg: 5,
+  skewDeg: 4,
+  pushPx: 16,
+  letterDeg: 9,
   gustSpeed: 1,
   springK: 70,
   springC: 8,

@@ -261,11 +261,11 @@ export function createFan({ canvas, isMobile, reduced }) {
     // diameter of the guard on screen, and where its centre sits
     let diam, cx, cy;
     if (mobile) {
-      diam = W * 0.92;
-      cx = W * 0.8;
-      cy = H * 0.27;
+      diam = W * 2.1; // zoomed right in: mostly just the face
+      cx = W * 0.72;
+      cy = H * 0.42;
     } else {
-      diam = Math.min(H * 0.94, W * 0.54);
+      diam = Math.min(H * 1.14, W * 0.66);
       cx = W * 0.5;
       cy = H * 0.5;
     }
@@ -284,8 +284,8 @@ export function createFan({ canvas, isMobile, reduced }) {
     layout.w = W;
     layout.h = H;
 
-    cfg.y = mobile ? -0.5 : 0;
-    cfg.tilt = mobile ? 0.3 : 0;
+    cfg.y = mobile ? -0.25 : 0;
+    cfg.tilt = mobile ? 0.12 : 0;
     dirty = true;
     if (reduced) render();
   }
