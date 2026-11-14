@@ -2,6 +2,7 @@ import './style.css';
 import { createWind, splitLetters } from './wind.js';
 import './cart.js';
 import './shop.js';
+import './contact.js';
 
 const isMobile = matchMedia('(max-width: 768px)').matches;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
