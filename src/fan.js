@@ -46,7 +46,7 @@ export function createFan({ canvas, isMobile, reduced }) {
   const fan = new THREE.Group();
   scene.add(fan);
 
-  const key = new THREE.DirectionalLight(0xffffff, 2.6);
+  const key = new THREE.DirectionalLight(0xffffff, 1.5);
   key.position.set(-5, 6, 9);
   key.castShadow = true;
   const sc = key.shadow.camera;
@@ -69,17 +69,17 @@ export function createFan({ canvas, isMobile, reduced }) {
   fan.add(wall);
 
   const plastic = new THREE.MeshPhysicalMaterial({
-    color: 0x1a2342, roughness: 0.42, metalness: 0.1,
-    clearcoat: 1, clearcoatRoughness: 0.2, side: THREE.DoubleSide,
+    color: 0x7d8cb8, roughness: 0.55, metalness: 0.05,
+    clearcoat: 0.3, clearcoatRoughness: 0.5, side: THREE.DoubleSide,
   });
-  const steel = new THREE.MeshStandardMaterial({ color: 0x2a3350, roughness: 0.4, metalness: 0.7 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x9ba8cf, roughness: 0.5, metalness: 0.35 });
   const blue = new THREE.MeshPhysicalMaterial({
-    color: 0x1f5bff, roughness: 0.3, metalness: 0.05,
-    clearcoat: 0.8, clearcoatRoughness: 0.2, side: THREE.DoubleSide,
+    color: 0x5b86ff, roughness: 0.45, metalness: 0.05,
+    clearcoat: 0.3, clearcoatRoughness: 0.5, side: THREE.DoubleSide,
   });
   const bladeMat = new THREE.MeshPhysicalMaterial({
-    color: 0x0c1330, roughness: 0.55, metalness: 0.05,
-    clearcoat: 0.3, clearcoatRoughness: 0.4, side: THREE.DoubleSide,
+    color: 0x62729f, roughness: 0.6, metalness: 0.05,
+    clearcoat: 0.15, clearcoatRoughness: 0.6, side: THREE.DoubleSide,
   });
 
   const castAll = (o) => o.traverse((m) => { if (m.isMesh) m.castShadow = true; });
@@ -316,6 +316,27 @@ export function createFan({ canvas, isMobile, reduced }) {
     target = LEVELS[l];
   }
 
+  // tonal palettes: the fan sits close to the page colour so it blends in instead of fighting the content
+  const PAL = {
+    light: { plastic: 0x7d8cb8, steel: 0x9ba8cf, blade: 0x62729f, blue: 0x5b86ff, env: 0.7, key: 1.5, rim: 15, shadow: 0.16, shadowColor: 0x1b2c6b },
+    dark: { plastic: 0x2a3d78, steel: 0x3a4f98, blade: 0x1a2a5e, blue: 0x4d7bff, env: 0.45, key: 1.2, rim: 40, shadow: 0.4, shadowColor: 0x01051a },
+  };
+  function setTheme(dark) {
+    const p = dark ? PAL.dark : PAL.light;
+    plastic.color.set(p.plastic);
+    steel.color.set(p.steel);
+    bladeMat.color.set(p.blade);
+    blue.color.set(p.blue);
+    scene.environmentIntensity = p.env;
+    key.intensity = p.key;
+    rim.intensity = p.rim;
+    wall.material.opacity = p.shadow;
+    wall.material.color.set(p.shadowColor);
+    dirty = true;
+    if (reduced) render();
+  }
+
   resize();
-  return { layout, update, setLevel, resize };
+  setTheme(document.documentElement.dataset.theme === 'dark');
+  return { layout, update, setLevel, setTheme, resize };
 }

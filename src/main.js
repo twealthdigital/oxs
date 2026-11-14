@@ -38,6 +38,62 @@ addEventListener('keydown', (e) => {
 });
 applyTurn();
 
+// nav: the active pill stretches over to the clicked item, then settles on it
+const nav = document.querySelector('.nav');
+const pill = nav.querySelector('.nav__pill');
+const links = [...nav.querySelectorAll('a')];
+const rectOf = (a) => ({ l: a.offsetLeft, w: a.offsetWidth, t: a.offsetTop, h: a.offsetHeight });
+const place = (l, w, t, h) => {
+  pill.style.left = l + 'px';
+  pill.style.width = w + 'px';
+  pill.style.top = t + 'px';
+  pill.style.height = h + 'px';
+};
+const snap = () => {
+  const r = rectOf(nav.querySelector('[aria-current]'));
+  pill.classList.add('instant');
+  place(r.l, r.w, r.t, r.h);
+  pill.offsetWidth;
+  pill.classList.remove('instant');
+};
+let pillTimer;
+links.forEach((a) =>
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const from = nav.querySelector('[aria-current]');
+    if (from === a) return;
+    const o = rectOf(from);
+    const n = rectOf(a);
+    from.removeAttribute('aria-current');
+    a.setAttribute('aria-current', 'page');
+    const l = Math.min(o.l, n.l);
+    const r = Math.max(o.l + o.w, n.l + n.w);
+    place(l, r - l, n.t, n.h); // stretch across both
+    clearTimeout(pillTimer);
+    pillTimer = setTimeout(() => place(n.l, n.w, n.t, n.h), 220); // then drag to the new item
+  })
+);
+snap();
+document.fonts.ready.then(snap);
+addEventListener('resize', snap);
+
+// theme switch
+const root = document.documentElement;
+const themeBtn = document.getElementById('theme');
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+function setTheme(dark, save) {
+  if (dark) root.dataset.theme = 'dark';
+  else delete root.dataset.theme;
+  themeBtn.setAttribute('aria-checked', String(dark));
+  themeMeta.content = dark ? '#060f2b' : '#ffffff';
+  fan.setTheme(dark);
+  if (save) {
+    try { localStorage.setItem('oxs-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  }
+}
+themeBtn.addEventListener('click', () => setTheme(root.dataset.theme !== 'dark', true));
+setTheme(root.dataset.theme === 'dark', false);
+
 // count-up stats
 document.querySelectorAll('[data-count]').forEach((el) => {
   const to = Number(el.dataset.count);
