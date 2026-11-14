@@ -235,7 +235,7 @@ export function createFan({ canvas, isMobile, reduced }) {
   let dirty = true;
 
   // desktop: only hovering the fan itself makes its head follow the cursor; elsewhere it just oscillates
-  const YAW_MAX = 0.6;
+  const YAW_MAX = 0.9;
   if (!isMobile && !reduced) {
     addEventListener(
       'pointermove',
@@ -243,7 +243,7 @@ export function createFan({ canvas, isMobile, reduced }) {
         const dx = e.clientX - layout.x;
         const dy = e.clientY - layout.y;
         const r = layout.r || 1;
-        hovering = Math.hypot(dx, dy) < r;
+        hovering = Math.hypot(dx, dy) < r * 1.05;
         ptr.x = Math.max(-1, Math.min(1, dx / r));
         ptr.y = Math.max(-1, Math.min(1, dy / r));
       },
@@ -307,14 +307,14 @@ export function createFan({ canvas, isMobile, reduced }) {
     // a running fan oscillates side to side; on desktop the swing is wide and slow like a real one
     const run = Math.min(1, omega / LEVELS[1]);
     sweep += dt * (isMobile ? 0.55 : 0.75) * run;
-    const sweepAmt = Math.sin(sweep) * (isMobile ? 0.12 : 0.5) * run;
+    const sweepAmt = Math.sin(sweep) * (isMobile ? 0.12 : 0.62) * run;
 
     // hovering the fan makes it look at the cursor; letting go resumes the oscillation
     const wantY = hovering ? ptr.x * YAW_MAX : cfg.y + sweepAmt;
-    const wantX = hovering ? cfg.tilt + ptr.y * 0.3 : cfg.tilt;
+    const wantX = hovering ? cfg.tilt + ptr.y * 0.4 : cfg.tilt;
     const dy = wantY - head.rotation.y;
     const dx = wantX - head.rotation.x;
-    const k = Math.min(1, dt * (hovering ? 5 : 3));
+    const k = Math.min(1, dt * (hovering ? 7 : 3));
     head.rotation.y += dy * k;
     head.rotation.x += dx * k;
 

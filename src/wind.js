@@ -77,6 +77,15 @@ export function createWind({ layout, isMobile, reduced, getFacing = () => 0 }) {
     };
   });
 
+  // logo, nav bar and theme switch: a tiny, steady sway that grows when the fan faces their way
+  const light = [
+    { el: document.querySelector('.logo'), anchor: 'left', nav: false },
+    { el: document.querySelector('.nav'), anchor: 'centre', nav: true },
+    { el: document.getElementById('theme'), anchor: 'left', nav: false },
+  ]
+    .filter((o) => o.el && !(isMobile && o.nav))
+    .map((o) => ({ ...o, phase: rand(0, 100), freq: rand(0.8, 1.1), side: -1, infl: 1, rot: { x: 0, v: 0 }, push: { x: 0, v: 0 }, lift: { x: 0, v: 0 } }));
+
   const box = document.getElementById('streaks');
   const streaks = Array.from({ length: counts[3] }, () => {
     const el = document.createElement('i');
@@ -95,6 +104,13 @@ export function createWind({ layout, isMobile, reduced, getFacing = () => 0 }) {
       it.side = isMobile ? -1 : cx < layout.x ? -1 : 1;
       const d = Math.hypot(cx - layout.x, cy - layout.y) / diag;
       it.infl = 0.4 + 0.9 * (1 - clamp(d * 1.3, 0, 1));
+    });
+    light.forEach((L) => {
+      L.el.style.transform = '';
+      const r = L.el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      L.side = isMobile ? -1 : cx < layout.x ? -1 : 1;
+      L.infl = 0.8;
     });
     settled = false;
   }
@@ -153,6 +169,7 @@ export function createWind({ layout, isMobile, reduced, getFacing = () => 0 }) {
   }
 
   function clearAll() {
+    light.forEach((L) => (L.el.style.transform = ''));
     items.forEach((it) => {
       it.el.style.transform = '';
       it.letters.forEach((L) => (L.el.style.transform = ''));
@@ -191,6 +208,19 @@ export function createWind({ layout, isMobile, reduced, getFacing = () => 0 }) {
           L.el.style.transform = `translate3d(${(sd * a * 10).toFixed(1)}px,0,0) rotate(${(-sd * a * SETTINGS.letterDeg).toFixed(2)}deg) skewX(${(sd * a * SETTINGS.letterDeg * 0.7).toFixed(2)}deg)`;
         }
       }
+    }
+
+    for (const L of light) {
+      const gu = gust(wt * L.freq, L.phase);
+      // left-anchored pieces feel more when the fan faces left; the nav bar (centred) feels it whichever way it turns
+      const aim = L.anchor === 'centre' ? 0.55 + 0.45 * Math.abs(facing) : 0.55 + 0.45 * clamp(facing * L.side, -1, 1);
+      const w = power * L.infl * aim * (0.35 + 0.65 * gu);
+      const dir = L.anchor === 'centre' ? (Math.abs(facing) < 0.05 ? 0 : Math.sign(facing)) * Math.min(1, Math.abs(facing) * 1.6) : L.side;
+      spring(L.rot, -dir * w * 1.7, dt);
+      spring(L.push, dir * w * 4.5, dt);
+      spring(L.lift, w * -1.2, dt);
+      L.el.style.transform = `translate3d(${L.push.x.toFixed(2)}px,${L.lift.x.toFixed(2)}px,0) rotate(${L.rot.x.toFixed(2)}deg)`;
+      if (Math.abs(L.rot.x) + Math.abs(L.rot.v) + Math.abs(L.push.x) * 0.1 > 0.03) rest = false;
     }
 
     if (power === 0 && rest) {

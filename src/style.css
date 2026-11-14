@@ -80,8 +80,8 @@ body { overflow-x: hidden; }
 
 /* header + nav */
 .header { position: absolute; inset: 0 0 auto 0; z-index: 10; height: var(--h); display: flex; align-items: center; justify-content: space-between; padding: 0 4vw; }
-.logo { font-size: 40px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
-.nav { position: relative; display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line); transition: background-color .4s ease, border-color .4s ease; }
+.logo { display: inline-block; transform-origin: 0 60%; will-change: transform; font-size: 40px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+.nav { transform-origin: 50% 0; position: relative; display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line); transition: background-color .4s ease, border-color .4s ease; }
 .nav a { position: relative; z-index: 1; display: flex; align-items: center; padding: 7px 18px; border-radius: 999px; color: var(--body); text-decoration: none; font-size: 16px; font-weight: 500; transition: color .3s ease, background-color .25s ease; }
 .nav a:hover { background: var(--soft); color: var(--accent); }
 .nav a[aria-current] { color: #fff; background: transparent; }
@@ -144,7 +144,7 @@ body { overflow-x: hidden; }
 .knob__btn:active .knob__cap { scale: .94; box-shadow: 0 2px 0 var(--clay-edge), 0 4px 6px var(--clay-drop), inset 0 3px 0 var(--clay-hi), inset 0 -5px 8px var(--clay-lo); }
 
 /* theme switch, fixed bottom left */
-.theme { position: fixed; left: 4vw; bottom: 3vh; z-index: 20; width: 88px; height: 46px; padding: 0; border: 0; border-radius: 999px; cursor: pointer; background: var(--tray); box-shadow: inset 0 3px 6px var(--tray-in), 0 4px 0 var(--tray-edge), 0 10px 16px var(--clay-drop); -webkit-tap-highlight-color: transparent; transition: background-color .4s ease; }
+.theme { transform-origin: 0 100%; position: fixed; left: 4vw; bottom: 3vh; z-index: 20; width: 88px; height: 46px; padding: 0; border: 0; border-radius: 999px; cursor: pointer; background: var(--tray); box-shadow: inset 0 3px 6px var(--tray-in), 0 4px 0 var(--tray-edge), 0 10px 16px var(--clay-drop); -webkit-tap-highlight-color: transparent; transition: background-color .4s ease; }
 .theme__bg { position: absolute; top: 50%; margin-top: -10px; color: var(--muted); }
 .theme__bg--sun { left: 12px; }
 .theme__bg--moon { right: 12px; }
