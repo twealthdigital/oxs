@@ -15,8 +15,9 @@
   <header class="topbar" id="topbar" aria-hidden="true">
     <a class="logo" href="#hero" aria-label="OXs" tabindex="-1">OXs</a>
     <nav class="topnav" aria-label="Main (sticky)">
-      <a href="#hero" aria-current="page" tabindex="-1">Product</a>
-      <a href="#specs" tabindex="-1">Specs</a>
+      <i class="nav__pill" aria-hidden="true"></i>
+      <a href="#hero" aria-current="page" tabindex="-1">Home</a>
+      <a href="#shop" tabindex="-1">Shop</a>
       <a href="#" tabindex="-1">Reviews</a>
       <a href="#" tabindex="-1">Support</a>
     </nav>
@@ -27,8 +28,8 @@
     <a class="logo" href="#hero" aria-label="OXs">OXs</a>
     <nav class="nav" aria-label="Main">
       <i class="nav__pill" aria-hidden="true"></i>
-      <a href="#hero" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg><span>Product</span></a>
-      <a href="#specs"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Specs</span></a>
+      <a href="#hero" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></a>
+      <a href="#shop"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Shop</span></a>
       <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>Reviews</span></a>
       <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Support</span></a>
     </nav>
@@ -54,7 +55,7 @@
         </h1>
         <p class="lede" data-wind>Stand, desk and tower fans with quiet motors and three real speeds, delivered to your door.</p>
         <div class="cta">
-          <a class="btn btn--blue" data-wind href="#"><span>Shop fans</span></a>
+          <a class="btn btn--blue" data-wind href="#shop"><span>Shop fans</span></a>
           <a class="btn btn--ghost" data-wind href="#compare"><span>Compare models</span></a>
         </div>
       </div>
@@ -87,19 +88,73 @@
     </div>
   </main>
 
-  <section class="specs" id="specs" aria-labelledby="specs-title">
-    <div class="specs__in">
-      <p class="eyebrow reveal">Specs</p>
-      <h2 class="specs__title reveal" id="specs-title">Quiet by design.<br /><span>Strong where it counts.</span></h2>
-      <p class="specs__lede reveal">Every OXs fan runs on a brushless motor with three real speeds, a wide sweep and a tilting head, so one fan can cool a whole room without the drone.</p>
+  <section class="shop" id="shop" aria-labelledby="shop-title">
+    <div class="shop__in">
+      <p class="eyebrow reveal">Shop</p>
+      <h2 class="shop__title reveal" id="shop-title">Pick your fan.<br /><span>Cool air, delivered.</span></h2>
+      <p class="shop__lede reveal">Stand, desk and tower fans with the same quiet brushless motor and three real speeds. Find the one that fits your room.</p>
 
       <div class="cards">
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 10v4"/></svg></span><b class="card__num">26<i>dB</i></b><h3>Whisper-quiet motor</h3><p>Brushless DC motor, about as loud as a quiet library.</p></article>
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/></svg></span><b class="card__num">3<i>speeds</i></b><h3>Real speeds, one knob</h3><p>Low, medium and turbo, each clearly different from the last.</p></article>
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></span><b class="card__num">90<i>°</i></b><h3>Wide oscillation</h3><p>Sweeps the whole room, or hold it steady on one spot.</p></article>
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19h14"/><path d="M7 16l10-8"/><path d="M13 8h4v4"/></svg></span><b class="card__num">25<i>°</i></b><h3>Tilting head</h3><p>Angle the airflow up at the bed or down at the desk.</p></article>
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span><b class="card__num">38<i>W</i></b><h3>Low power draw</h3><p>Runs all night without a noticeable bump on the bill.</p></article>
-        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b class="card__num">5<i>yr</i></b><h3>Motor warranty</h3><p>Covered for five years, with free dispatch on replacements.</p></article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Desk</span>
+          <div class="pcard__img"><img src="/images/shop/desk-mini.png" alt="Desk Fan Mini" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Desk Fan Mini</h3>
+            <p>Compact and quiet, made for desks and shelves.</p>
+            <span class="pcard__meta">38 cm · 60° sweep</span>
+            <div class="pcard__foot"><b class="pcard__price">$39</b><a class="pcard__go" href="#" aria-label="Shop Desk Fan Mini"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Desk</span>
+          <div class="pcard__img"><img src="/images/shop/desk-pro.png" alt="Desk Fan Pro" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Desk Fan Pro</h3>
+            <p>More airflow in the same small footprint.</p>
+            <span class="pcard__meta">14 m³/min · 3 speeds</span>
+            <div class="pcard__foot"><b class="pcard__price">$59</b><a class="pcard__go" href="#" aria-label="Shop Desk Fan Pro"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Stand</span>
+          <div class="pcard__img"><img src="/images/shop/stand-classic.png" alt="Stand Fan Classic" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Stand Fan Classic</h3>
+            <p>The all-rounder for bedrooms and living rooms.</p>
+            <span class="pcard__meta">90 to 120 cm · 90° sweep</span>
+            <div class="pcard__foot"><b class="pcard__price">$89</b><a class="pcard__go" href="#" aria-label="Shop Stand Fan Classic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Stand</span>
+          <div class="pcard__img"><img src="/images/shop/stand-max.png" alt="Stand Fan Max" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Stand Fan Max</h3>
+            <p>Our strongest fan for big, open rooms.</p>
+            <span class="pcard__meta">22 m³/min · tilting head</span>
+            <div class="pcard__foot"><b class="pcard__price">$119</b><a class="pcard__go" href="#" aria-label="Shop Stand Fan Max"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Tower</span>
+          <div class="pcard__img"><img src="/images/shop/tower-slim.png" alt="Tower Fan Slim" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Tower Fan Slim</h3>
+            <p>A slim footprint that tucks into any corner.</p>
+            <span class="pcard__meta">105 cm · 80° sweep</span>
+            <div class="pcard__foot"><b class="pcard__price">$99</b><a class="pcard__go" href="#" aria-label="Shop Tower Fan Slim"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+        <article class="pcard reveal">
+          <span class="pcard__tag">Tower</span>
+          <div class="pcard__img"><img src="/images/shop/tower-quiet.png" alt="Tower Fan Quiet" loading="lazy" onerror="this.remove()" /></div>
+          <div class="pcard__body">
+            <h3>Tower Fan Quiet</h3>
+            <p>Our quietest fan, made for light sleepers.</p>
+            <span class="pcard__meta">24 dB · 3 speeds</span>
+            <div class="pcard__foot"><b class="pcard__price">$129</b><a class="pcard__go" href="#" aria-label="Shop Tower Fan Quiet"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
       </div>
 
       <h3 class="compare__title reveal" id="compare">Compare models</h3>
@@ -115,7 +170,6 @@
           </tbody>
         </table>
       </div>
-      <div class="specs__cta reveal"><a class="btn btn--blue" href="#"><span>Shop fans</span></a></div>
     </div>
   </section>
 

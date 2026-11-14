@@ -38,43 +38,51 @@ addEventListener('keydown', (e) => {
 });
 applyTurn();
 
-// nav: the active pill stretches over to the clicked item, then settles on it
-const nav = document.querySelector('.nav');
-const pill = nav.querySelector('.nav__pill');
-const links = [...nav.querySelectorAll('a')];
+// nav: the active pill stretches over to the clicked item, then settles on it (main header and sticky header)
 const rectOf = (a) => ({ l: a.offsetLeft, w: a.offsetWidth, t: a.offsetTop, h: a.offsetHeight });
-const place = (l, w, t, h) => {
-  pill.style.left = l + 'px';
-  pill.style.width = w + 'px';
-  pill.style.top = t + 'px';
-  pill.style.height = h + 'px';
-};
-const snap = () => {
-  const r = rectOf(nav.querySelector('[aria-current]'));
-  pill.classList.add('instant');
-  place(r.l, r.w, r.t, r.h);
-  pill.offsetWidth;
-  pill.classList.remove('instant');
-};
-let pillTimer;
-const topLinks = [...document.querySelectorAll('.topnav a')];
+function makePill(navEl) {
+  const pill = navEl.querySelector('.nav__pill');
+  const items = [...navEl.querySelectorAll('a')];
+  let timer;
+  const place = (l, w, t, h) => {
+    pill.style.left = l + 'px';
+    pill.style.width = w + 'px';
+    pill.style.top = t + 'px';
+    pill.style.height = h + 'px';
+  };
+  const snap = () => {
+    const cur = navEl.querySelector('[aria-current]');
+    if (!cur) return;
+    const r = rectOf(cur);
+    pill.classList.add('instant');
+    place(r.l, r.w, r.t, r.h);
+    pill.offsetWidth;
+    pill.classList.remove('instant');
+  };
+  const move = (a) => {
+    const from = navEl.querySelector('[aria-current]');
+    if (from === a) return;
+    const o = rectOf(from);
+    const n = rectOf(a);
+    from.removeAttribute('aria-current');
+    a.setAttribute('aria-current', 'page');
+    const l = Math.min(o.l, n.l);
+    const r = Math.max(o.l + o.w, n.l + n.w);
+    place(l, r - l, n.t, n.h); // stretch across both
+    clearTimeout(timer);
+    timer = setTimeout(() => place(n.l, n.w, n.t, n.h), 220); // then drag to the new item
+  };
+  return { items, snap, move };
+}
+const mainNav = makePill(document.querySelector('.nav'));
+const topNav = makePill(document.querySelector('.topnav'));
+const snap = () => { mainNav.snap(); topNav.snap(); };
 let spyLock = 0;
 
-// make one nav item the current one (slides the pill, mirrors it in the sticky header)
-function activate(a) {
-  const from = nav.querySelector('[aria-current]');
-  const i = links.indexOf(a);
-  topLinks.forEach((t, j) => (j === i ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current')));
-  if (from === a) return;
-  const o = rectOf(from);
-  const n = rectOf(a);
-  from.removeAttribute('aria-current');
-  a.setAttribute('aria-current', 'page');
-  const l = Math.min(o.l, n.l);
-  const r = Math.max(o.l + o.w, n.l + n.w);
-  place(l, r - l, n.t, n.h); // stretch across both
-  clearTimeout(pillTimer);
-  pillTimer = setTimeout(() => place(n.l, n.w, n.t, n.h), 220); // then drag to the new item
+// make one nav item the current one in both headers
+function activate(i) {
+  mainNav.move(mainNav.items[i]);
+  topNav.move(topNav.items[i]);
 }
 
 // clicking a link scrolls to its section when it has one
@@ -82,12 +90,12 @@ function go(e, index) {
   const href = e.currentTarget.getAttribute('href');
   e.preventDefault();
   spyLock = performance.now() + 1000;
-  activate(links[index]);
+  activate(index);
   const target = href && href.length > 1 ? document.querySelector(href) : null;
   if (target) target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }
-links.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
-topLinks.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
+mainNav.items.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
+topNav.items.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
 document.querySelectorAll('.logo').forEach((a) => a.addEventListener('click', (e) => go(e, 0)));
 snap();
 document.fonts.ready.then(snap);
@@ -177,7 +185,7 @@ else requestAnimationFrame(loop);
 // mobile: once the page scrolls past the first screen's top, the bottom nav detaches into a floating bar
 let navTimer;
 const mainHeader = document.querySelector('.header');
-const specsEl = document.getElementById('specs');
+const shopEl = document.getElementById('shop');
 const topbar = document.getElementById('topbar');
 function onScroll() {
   // the first header scrolls away with the hero; once it is out of sight the full sticky header drops down
@@ -185,12 +193,13 @@ function onScroll() {
   if (stuck !== root.classList.contains('is-stuck')) {
     root.classList.toggle('is-stuck', stuck);
     topbar.setAttribute('aria-hidden', String(!stuck));
+    if (stuck) topNav.snap();
     topbar.querySelectorAll('a').forEach((a) => (stuck ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
   }
   // highlight the section in view
   if (performance.now() > spyLock) {
-    const inSpecs = specsEl.getBoundingClientRect().top < innerHeight * 0.5;
-    activate(links[inSpecs ? 1 : 0]);
+    const inShop = shopEl.getBoundingClientRect().top < innerHeight * 0.5;
+    activate(inShop ? 1 : 0);
   }
   const on = scrollY > 40;
   if (on === root.classList.contains('is-scrolled')) return;
