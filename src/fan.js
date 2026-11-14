@@ -57,7 +57,8 @@ export function createFan({ canvas, isMobile, reduced }) {
   key.shadow.normalBias = 0.02;
   const rim = new THREE.PointLight(0x4d86ff, 25, 0, 2);
   rim.position.set(4, 3, -3);
-  fan.add(key, key.target, rim);
+  const fill = new THREE.HemisphereLight(0xffffff, 0xb4c4f2, 0.8);
+  fan.add(key, key.target, rim, fill);
 
   // wall: invisible except for the soft shadow of the guard and blades
   const wall = new THREE.Mesh(
@@ -68,77 +69,53 @@ export function createFan({ canvas, isMobile, reduced }) {
   wall.receiveShadow = true;
   fan.add(wall);
 
-  const plastic = new THREE.MeshPhysicalMaterial({
-    color: 0x7d8cb8, roughness: 0.55, metalness: 0.05,
-    clearcoat: 0.3, clearcoatRoughness: 0.5, side: THREE.DoubleSide,
-  });
-  const steel = new THREE.MeshStandardMaterial({ color: 0x9ba8cf, roughness: 0.5, metalness: 0.35 });
-  const blue = new THREE.MeshPhysicalMaterial({
-    color: 0x5b86ff, roughness: 0.45, metalness: 0.05,
-    clearcoat: 0.3, clearcoatRoughness: 0.5, side: THREE.DoubleSide,
-  });
-  const bladeMat = new THREE.MeshPhysicalMaterial({
-    color: 0x62729f, roughness: 0.6, metalness: 0.05,
-    clearcoat: 0.15, clearcoatRoughness: 0.6, side: THREE.DoubleSide,
-  });
-
+  const plastic = new THREE.MeshPhysicalMaterial({ color: 0xf3f6ff, roughness: 0.32, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.25, side: THREE.DoubleSide });
+  const steel = new THREE.MeshStandardMaterial({ color: 0xdde5fa, roughness: 0.35, metalness: 0.2 });
+  const blue = new THREE.MeshPhysicalMaterial({ color: 0x1f5bff, roughness: 0.3, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.2, side: THREE.DoubleSide });
+  const bladeMat = new THREE.MeshPhysicalMaterial({ color: 0x2d6bff, roughness: 0.28, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.18, side: THREE.DoubleSide });
   const castAll = (o) => o.traverse((m) => { if (m.isMesh) m.castShadow = true; });
 
-  // stand: runs straight down from behind the head and out of the hero
+  // stand: a thick neck running down and out of the hero
   const stand = new THREE.Group();
   stand.position.z = -0.6;
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 14, 20), steel);
-  pole.position.y = -7.35;
-  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.26, 24), plastic);
-  collar.position.y = -1.6;
-  const joint = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 16), plastic);
-  joint.position.y = -0.36;
-  stand.add(pole, collar, joint);
-  stand.visible = !isMobile; // on phones the fan floats, no pole through the content
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.27, 14, 40), plastic);
+  neck.position.y = -7.35;
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 40), blue);
+  collar.position.y = -1.7;
+  const joint = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 20), plastic);
+  joint.position.y = -0.4;
+  stand.add(neck, collar, joint);
+  stand.visible = !isMobile;
   fan.add(stand);
 
   const head = new THREE.Group();
   fan.add(head);
 
   const housing = new THREE.Mesh(
-    new THREE.LatheGeometry(
-      pts([[0, -1.22], [0.22, -1.2], [0.4, -1.12], [0.54, -0.98], [0.61, -0.8], [0.62, -0.6], [0.6, -0.38], [0.54, -0.2], [0.46, -0.1], [0.38, -0.04], [0.34, -0.02], [0, -0.02]]),
-      48
-    ).rotateX(Math.PI / 2),
+    new THREE.LatheGeometry(pts([[0, -1.22], [0.22, -1.2], [0.4, -1.12], [0.54, -0.98], [0.61, -0.8], [0.62, -0.6], [0.6, -0.38], [0.54, -0.2], [0.46, -0.1], [0.38, -0.04], [0.34, -0.02], [0, -0.02]]), 64).rotateX(Math.PI / 2),
     plastic
   );
-  const trim = new THREE.Mesh(new THREE.TorusGeometry(0.455, 0.028, 8, 48), blue);
-  trim.position.z = -0.1;
-  for (const sx of [-1, 1]) {
-    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.2, 20).rotateZ(Math.PI / 2), blue);
-    knob.position.set(sx * 0.64, 0, -0.6);
-    head.add(knob);
-  }
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 12).rotateX(Math.PI / 2), steel);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 16).rotateX(Math.PI / 2), steel);
   shaft.position.z = 0.2;
-  head.add(housing, trim, shaft);
+  head.add(housing, shaft);
 
+  // smooth paddle blade: broad, rounded tip, gentle pitch and cup, no creases
   function makeBlade() {
-    const g = new THREE.PlaneGeometry(1, 1, 22, 6);
+    const g = new THREE.PlaneGeometry(1, 1, 48, 18);
     const p = g.attributes.position;
-    const r0 = 0.2;
-    const r1 = 1.6;
+    const r0 = 0.24, r1 = 1.58, Wm = 0.5, Wr = 0.15;
+    const sm = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
     for (let i = 0; i < p.count; i++) {
       const u = p.getX(i) + 0.5;
-      const v = p.getY(i);
-      let w;
-      if (u < 0.72) w = 0.2 + 0.46 * Math.sin((Math.PI / 2) * (u / 0.72));
-      else {
-        const k = (u - 0.72) / 0.28;
-        w = 0.66 * Math.sqrt(Math.max(0, 1 - k * k));
-      }
-      const twist = 0.75 - 0.5 * u;
-      const yy = (v + 0.1 * Math.sin(Math.PI * u)) * w;
+      const v = p.getY(i) * 2;
+      const w = u < 0.7 ? Wr + (Wm - Wr) * sm(u / 0.55) : Wm * Math.sqrt(Math.max(0, 1 - Math.pow((u - 0.7) / 0.3, 2)));
+      const pitch = 0.5 - 0.22 * u;
+      const y = v * w;
       const x = r0 + u * (r1 - r0);
-      const y = yy * Math.cos(twist);
-      const z = yy * Math.sin(twist) + v * v * 0.5 * w;
-      const sw = 0.3 * u * u;
-      p.setXYZ(i, x * Math.cos(sw) - y * Math.sin(sw), x * Math.sin(sw) + y * Math.cos(sw), z);
+      const z = y * Math.sin(pitch) + 0.06 * (1 - v * v) * Math.sin(Math.PI * Math.min(1, u * 1.1));
+      const yy = y * Math.cos(pitch);
+      const sw = 0.22 * u * u;
+      p.setXYZ(i, x * Math.cos(sw) - yy * Math.sin(sw), x * Math.sin(sw) + yy * Math.cos(sw), z);
     }
     g.computeVertexNormals();
     return g;
@@ -146,10 +123,7 @@ export function createFan({ canvas, isMobile, reduced }) {
 
   const blades = new THREE.Group();
   blades.position.z = 0.06;
-  const hub = new THREE.Mesh(
-    new THREE.LatheGeometry(pts([[0, -0.14], [0.22, -0.14], [0.3, -0.08], [0.3, 0.1], [0.25, 0.2], [0.14, 0.3], [0, 0.34]]), 32).rotateX(Math.PI / 2),
-    blue
-  );
+  const hub = new THREE.Mesh(new THREE.LatheGeometry(pts([[0, -0.14], [0.26, -0.14], [0.34, -0.06], [0.34, 0.1], [0.28, 0.22], [0.14, 0.32], [0, 0.36]]), 48).rotateX(Math.PI / 2), blue);
   blades.add(hub);
   const bladeGeo = makeBlade();
   for (let i = 0; i < 3; i++) {
@@ -160,28 +134,26 @@ export function createFan({ canvas, isMobile, reduced }) {
   }
   head.add(blades);
 
-  // soft motion-blur disc that fades in with speed
+  // faint motion-blur disc that fades in with speed
   const disc = new THREE.Mesh(
-    new THREE.CircleGeometry(1.62, 48),
-    new THREE.MeshBasicMaterial({ color: 0x1f5bff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
+    new THREE.CircleGeometry(1.62, 64),
+    new THREE.MeshBasicMaterial({ color: 0x2d6bff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
   );
   disc.position.z = 0.06;
   head.add(disc);
 
-  const wireR = 0.011;
-  const wireGeo = new THREE.CylinderGeometry(wireR, wireR, 1, 6);
-  const strutGeo = new THREE.CylinderGeometry(0.026, 0.026, 1, 8);
-
-  function ring(r, z, tube, mat) {
-    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, isMobile ? 64 : 128), mat);
+  // dense guard like a real table fan: many fine radial wires plus concentric rings
+  const wireR = 0.0075;
+  const wireGeo = new THREE.CylinderGeometry(wireR, wireR, 1, 5);
+  const ring = (r, z, tube, mat) => {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, isMobile ? 96 : 160), mat);
     m.position.z = z;
     return m;
-  }
-
-  function buildGuard(zC, zR, spokes, radii, rings, offset) {
+  };
+  function buildGuard(zC, zR, spokes, radii, offset) {
     const g = new THREE.Group();
     const zAt = (r) => zR + (zC - zR) * (1 - (r / R) * (r / R));
-    rings.forEach((r) => g.add(ring(r, zAt(r), wireR, steel)));
+    radii.slice(0, -1).forEach((r) => g.add(ring(r, zAt(r), wireR * 1.3, steel)));
     const segs = radii.length - 1;
     const mesh = new THREE.InstancedMesh(wireGeo, steel, spokes * segs);
     mesh.frustumCulled = false;
@@ -189,32 +161,57 @@ export function createFan({ canvas, isMobile, reduced }) {
     for (let i = 0; i < spokes; i++) {
       const a = (i / spokes) * Math.PI * 2 + offset;
       for (let s = 0; s < segs; s++) {
-        const r1 = radii[s];
-        const r2 = radii[s + 1];
-        placeWire(
-          mesh,
-          n++,
-          new THREE.Vector3(Math.cos(a) * r1, Math.sin(a) * r1, zAt(r1)),
-          new THREE.Vector3(Math.cos(a) * r2, Math.sin(a) * r2, zAt(r2))
-        );
+        const r1 = radii[s], r2 = radii[s + 1];
+        placeWire(mesh, n++, new THREE.Vector3(Math.cos(a) * r1, Math.sin(a) * r1, zAt(r1)), new THREE.Vector3(Math.cos(a) * r2, Math.sin(a) * r2, zAt(r2)));
       }
     }
     mesh.instanceMatrix.needsUpdate = true;
     g.add(mesh);
     return g;
   }
+  const front = buildGuard(0.95, 0.28, isMobile ? 40 : 72, [0.4, 0.56, 0.72, 0.88, 1.04, 1.2, 1.36, 1.52, 1.66, R], 0);
+  const back = buildGuard(-0.7, -0.28, isMobile ? 18 : 30, [0.62, 0.95, 1.28, 1.6, R], 0.05);
+  head.add(front, back);
 
-  const front = buildGuard(0.95, 0.28, isMobile ? 16 : 26, [0.22, 0.55, 0.95, 1.35, 1.65, R], [0.55, 0.95, 1.35, 1.65], 0);
-  const back = buildGuard(-0.7, -0.28, isMobile ? 10 : 16, [0.62, 0.95, 1.35, 1.65, R], [0.95, 1.35, 1.65], 0.12);
-  const badge = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.07, 32).rotateX(Math.PI / 2), blue);
-  badge.position.z = 0.945;
-  const badgeRing = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.02, 8, 32), steel);
-  badgeRing.position.z = 0.945;
-  head.add(front, back, badge, badgeRing);
+  // centre cap with a glossy navy "OXs" badge
+  const badgeTex = new THREE.CanvasTexture(document.createElement('canvas'));
+  badgeTex.colorSpace = THREE.SRGBColorSpace;
+  badgeTex.anisotropy = 8;
+  function drawBadge() {
+    const c = badgeTex.image;
+    c.width = c.height = 256;
+    const x = c.getContext('2d');
+    x.clearRect(0, 0, 256, 256);
+    x.fillStyle = '#0a1740';
+    x.beginPath();
+    x.roundRect(14, 14, 228, 228, 70);
+    x.fill();
+    const gl = x.createLinearGradient(0, 14, 0, 128);
+    gl.addColorStop(0, 'rgba(255,255,255,.28)');
+    gl.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = gl;
+    x.beginPath();
+    x.roundRect(14, 14, 228, 114, [70, 70, 0, 0]);
+    x.fill();
+    x.fillStyle = '#ffffff';
+    x.font = '700 92px Fredoka, ui-rounded, system-ui, sans-serif';
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.fillText('OXs', 128, 136);
+    badgeTex.needsUpdate = true;
+  }
+  drawBadge();
+  document.fonts.ready.then(() => { drawBadge(); dirty = true; });
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.42, 0.1, 64).rotateX(Math.PI / 2), plastic);
+  cap.position.z = 0.98;
+  const badge = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.6), new THREE.MeshPhysicalMaterial({ map: badgeTex, transparent: true, roughness: 0.25, clearcoat: 1 }));
+  badge.position.z = 1.034;
+  head.add(cap, badge);
 
+  // blue rim + struts
   const rimGroup = new THREE.Group();
-  rimGroup.add(ring(R, 0.28, 0.05, plastic), ring(R, -0.28, 0.05, plastic));
-  const struts = new THREE.InstancedMesh(strutGeo, plastic, 8);
+  rimGroup.add(ring(R, 0.28, 0.05, blue), ring(R, -0.28, 0.05, blue));
+  const struts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.026, 0.026, 1, 12), blue, 8);
   struts.frustumCulled = false;
   for (let i = 0; i < 8; i++) {
     const a = (i / 8) * Math.PI * 2;
@@ -318,8 +315,8 @@ export function createFan({ canvas, isMobile, reduced }) {
 
   // tonal palettes: the fan sits close to the page colour so it blends in instead of fighting the content
   const PAL = {
-    light: { plastic: 0x7d8cb8, steel: 0x9ba8cf, blade: 0x62729f, blue: 0x5b86ff, env: 0.7, key: 1.5, rim: 15, shadow: 0.16, shadowColor: 0x1b2c6b },
-    dark: { plastic: 0x2a3d78, steel: 0x3a4f98, blade: 0x1a2a5e, blue: 0x4d7bff, env: 0.45, key: 1.2, rim: 40, shadow: 0.4, shadowColor: 0x01051a },
+    light: { plastic: 0xf3f6ff, steel: 0xd3ddf7, blade: 0x2d6bff, blue: 0x1f5bff, env: 0.8, key: 1.4, rim: 10, shadow: 0.16, shadowColor: 0x1b2c6b },
+    dark: { plastic: 0xa9b8e6, steel: 0x8397d4, blade: 0x2a5ce6, blue: 0x2a5ce6, env: 0.5, key: 1.1, rim: 30, shadow: 0.4, shadowColor: 0x01051a },
   };
   function setTheme(dark) {
     const p = dark ? PAL.dark : PAL.light;
