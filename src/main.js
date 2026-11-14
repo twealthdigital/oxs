@@ -209,7 +209,7 @@ else requestAnimationFrame(loop);
 // mobile: once the page scrolls past the first screen's top, the bottom nav detaches into a floating bar
 let navTimer;
 const mainHeader = document.querySelector('.header');
-const shopEl = document.getElementById('shop');
+const spyEls = ['shop', 'about', 'contact'].map((id) => document.getElementById(id));
 const topbar = document.getElementById('topbar');
 function onScroll() {
   // the first header scrolls away with the hero; once it is out of sight the full sticky header drops down
@@ -222,8 +222,9 @@ function onScroll() {
   }
   // highlight the section in view
   if (performance.now() > spyLock) {
-    const inShop = shopEl.getBoundingClientRect().top < innerHeight * 0.5;
-    activate(inShop ? 1 : 0);
+    let idx = 0;
+    spyEls.forEach((el, i) => { if (el && el.getBoundingClientRect().top < innerHeight * 0.5) idx = i + 1; });
+    activate(idx);
   }
   const on = scrollY > 40;
   if (on === root.classList.contains('is-scrolled')) return;

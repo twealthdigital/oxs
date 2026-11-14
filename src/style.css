@@ -323,7 +323,20 @@ html.cart-open { overflow: hidden; }
 .pager__b:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .pager__arrow .ic { width: 20px; height: 20px; stroke-width: 2.8; }
 
-@media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+/* about */
+.about { position: relative; background: var(--bg); padding: 4vh 4vw 16vh; transition: background-color .4s ease; scroll-margin-top: 70px; }
+.about__in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(32px, 6vw, 96px); align-items: center; padding-top: 12vh; border-top: 2px solid var(--line); }
+.about__p { margin-top: 22px; max-width: 54ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.6; font-weight: 500; color: var(--body); }
+.about__p:first-of-type { margin-top: 28px; }
+.about__cta { margin-top: 34px; }
+.about__list { list-style: none; display: grid; gap: 20px; }
+.about__card { display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start; padding: 24px; border-radius: 28px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 6px 0 var(--line); transition: background-color .4s ease, border-color .4s ease, opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+.about__ic { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--soft); color: var(--accent); }
+.about__ic .ic { width: 28px; height: 28px; stroke-width: 2.2; }
+.about__card h3 { font-size: 22px; font-weight: 700; color: var(--ink); }
+.about__card p { margin-top: 6px; font-size: 16px; line-height: 1.5; font-weight: 500; color: var(--body); }
+
+@media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } .about__in { grid-template-columns: 1fr; } }
 
 @media (min-width: 769px) {
   /* the fan fades out toward the text column so headline, copy and buttons never fight it */
@@ -384,6 +397,12 @@ html.cart-open { overflow: hidden; }
   .topbar .logo { font-size: 28px; }
   .topnav { display: none; }
   .shop { padding: 8vh 7vw 150px; }
+  .about { padding: 0 7vw 150px; }
+  .about__in { grid-template-columns: 1fr; gap: 36px; padding-top: 8vh; }
+  .about__card { padding: 18px; grid-template-columns: 52px 1fr; gap: 14px; border-radius: 24px; }
+  .about__ic { width: 52px; height: 52px; }
+  .about__card h3 { font-size: 20px; }
+  .about__card p { font-size: 15px; }
   .cards { grid-template-columns: 1fr; gap: 18px; margin-top: 5vh; }
   /* product cards on mobile: picture on the left, details on the right, 3 per page */
   .pcard { display: grid; grid-template-columns: 38% 1fr; align-items: center; gap: 16px; min-height: 0; padding: 16px; border-radius: 24px; }
