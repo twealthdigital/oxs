@@ -283,7 +283,7 @@ if (ffan) {
     ffan.style.width = `${S}px`;
     ffan.style.height = `${S}px`;
     ffan.style.left = `${cx - S / 2 - wr.left}px`;
-    ffan.style.top = `${wr.height / 2 - S / 2}px`;
+    ffan.style.top = `${wr.height / 2 - S / 2 + S * 0.035}px`;
     ffan.style.setProperty('--face-left', `${(S - D) / 2}px`);
     if (api) api.resize();
   };
