@@ -1,13 +1,62 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oxs</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>OXs</title>
+</head>
+<body>
+  <header class="header">
+    <a class="logo glitch" href="#" data-text="OXs" aria-label="OXs">OXs</a>
+    <nav class="nav">
+      <a href="#"><span class="hg" data-text="Product">Product</span></a>
+      <a href="#"><span class="hg" data-text="Specs">Specs</span></a>
+      <a href="#"><span class="hg" data-text="Reviews">Reviews</span></a>
+      <a href="#"><span class="hg" data-text="Support">Support</span></a>
+    </nav>
+    <a class="btn btn--red" href="#"><span class="hg" data-text="Buy now">Buy now</span></a>
+  </header>
+
+  <main class="hero" id="hero">
+    <svg class="air" viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-50 220 C 200 120, 380 320, 640 220 S 1000 140, 1250 240" />
+      <path d="M-50 400 C 220 300, 420 500, 700 380 S 1020 320, 1250 420" />
+      <path d="M-50 580 C 180 500, 400 660, 660 560 S 1000 500, 1250 600" />
+    </svg>
+    <div class="hero__glow"></div>
+    <canvas id="fan-canvas"></canvas>
+    <div class="streaks" id="streaks"></div>
+
+    <div class="hero__content">
+      <h1 class="headline" aria-label="Blow everything away.">
+        <span class="line" data-wind data-split>Blow</span>
+        <span class="line line--red" data-wind data-split>everything</span>
+        <span class="line" data-wind data-split>away.</span>
+      </h1>
+      <p class="lede" data-wind>The fan that gets the whole room moving. Pick a speed and feel the page react.</p>
+      <div class="cta">
+        <a class="btn btn--red" data-wind href="#"><span class="hg" data-text="Shop OXs">Shop OXs</span></a>
+        <a class="btn" data-wind href="#"><span class="hg" data-text="See specs">See specs</span></a>
+      </div>
+      <div class="cards">
+        <div class="card" data-wind><b><span class="hg" data-text="3 speeds">3 speeds</span></b><span>Breeze, wind, storm</span></div>
+        <div class="card" data-wind><b><span class="hg" data-text="Low noise">Low noise</span></b><span>Loud look, quiet motor</span></div>
+      </div>
+    </div>
+
+    <div class="speed" role="group" aria-label="Fan speed">
+      <span class="speed__label">Speed</span>
+      <button class="key" data-level="0" aria-pressed="true"><i class="led"></i><b>OFF</b></button>
+      <button class="key" data-level="1" aria-pressed="false"><i class="led"></i><b>1</b></button>
+      <button class="key" data-level="2" aria-pressed="false"><i class="led"></i><b>2</b></button>
+      <button class="key" data-level="3" aria-pressed="false"><i class="led"></i><b>3</b></button>
+    </div>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
