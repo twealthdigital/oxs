@@ -182,8 +182,14 @@ body { overflow-x: hidden; }
   .headline { font-size: clamp(42px, 14vw, 68px); text-shadow: 0 0 14px rgba(var(--bg-rgb), .95), 0 0 3px rgba(var(--bg-rgb), .9); }
   /* soft, light fade behind the headline only; the fan still shows through */
   .headline { position: relative; }
-  .headline::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: -7vw; right: -7vw; top: -14svh; bottom: -3svh;
-    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 0) 0%, rgba(var(--bg-rgb), .5) 32%, rgba(var(--bg-rgb), .5) 72%, rgba(var(--bg-rgb), 0) 100%); }
+  .headline::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: -7vw; right: -7vw; top: -14svh; bottom: -6svh;
+    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 0) 0%, rgba(var(--bg-rgb), .5) 32%, rgba(var(--bg-rgb), .58) 70%, rgba(var(--bg-rgb), .4) 86%, rgba(var(--bg-rgb), 0) 100%); }
+
+  /* header blends into the page colour (light + dark) and eases out just above the headline,
+     so the header and the big text sit on a clean surface while the fan still shows below */
+  .hero::before { content: ''; position: absolute; z-index: 2; pointer-events: none; left: 0; right: 0; top: 0; height: calc(var(--h) + 17svh);
+    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 1) calc(var(--h) * .55), rgba(var(--bg-rgb), .8) calc(var(--h) + 3svh), rgba(var(--bg-rgb), .4) calc(var(--h) + 10svh), rgba(var(--bg-rgb), 0) 100%);
+    transition: background .4s ease; }
   .lede { max-width: 30ch; margin-top: 4svh; font-size: 16px; font-weight: 500; color: var(--ink); text-shadow: 0 0 10px rgba(var(--bg-rgb), .95); }
   .cta { margin-top: 4.5svh; }
   .col--right { display: flex; flex-direction: row; width: 100%; gap: 16px; }
