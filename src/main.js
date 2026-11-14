@@ -1,6 +1,7 @@
 import './style.css';
 import { createFan } from './fan.js';
 import { createWind, splitLetters } from './wind.js';
+import './cart.js';
 
 const isMobile = matchMedia('(max-width: 768px)').matches;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -209,16 +210,3 @@ function onScroll() {
 }
 addEventListener('scroll', onScroll, { passive: true });
 onScroll();
-
-// add to cart buttons: roll to a tick that says "Added", then roll back to the cart
-document.querySelectorAll('.pcard__add').forEach((b) =>
-  b.addEventListener('click', () => {
-    if (b.classList.contains('is-added')) return;
-    b.classList.add('is-added');
-    b.setAttribute('aria-label', 'Added to cart');
-    setTimeout(() => {
-      b.classList.remove('is-added');
-      b.setAttribute('aria-label', b.dataset.label);
-    }, 1900);
-  })
-);
