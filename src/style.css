@@ -325,6 +325,9 @@ html.cart-open { overflow: hidden; }
   .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; gap: 0; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)); border-radius: 0; border: 2px solid transparent; background: transparent; box-shadow: none; justify-content: space-around;
     transition: left .4s cubic-bezier(.6,0,.2,1), right .4s cubic-bezier(.6,0,.2,1), bottom .4s cubic-bezier(.6,0,.2,1), border-radius .4s ease, background-color .4s ease, border-color .4s ease, box-shadow .4s ease; }
   :root.is-scrolled .nav { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 6px 8px; border-radius: 26px; background: var(--surface); border-color: var(--line); box-shadow: 0 3px 0 var(--line), 0 10px 26px rgba(var(--glow), .18); }
+  /* floating bar uses the opposite theme: dark on the light page, light on the dark page */
+  :root.is-scrolled .nav { --ink: #eef3ff; --body: #a9b8e6; --muted: #5c6fb0; --line: #1a2c6b; --surface: #0c1a48; --soft: #14275f; --accent: #6f98ff; }
+  :root[data-theme='dark'].is-scrolled .nav { --ink: #0a1740; --body: #3d4a74; --muted: #8e9bc4; --line: #dbe3f7; --surface: #ffffff; --soft: #eaf0ff; --accent: #1f5bff; }
   .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 8px 4px 7px; border-radius: 18px; font-size: 12px; font-weight: 600; }
   .nav .ic { display: block; width: 22px; height: 22px; }
   .nav__pill { border-radius: 18px; }
