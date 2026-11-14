@@ -397,6 +397,10 @@ html.cart-open { overflow: hidden; }
   .pcard__foot { margin-top: 12px; }
   .pcard__price { font-size: 25px; }
   .pager { margin-top: 28px; }
+  /* no visible horizontal scrollbars on mobile (the compare table still swipes sideways) */
+  .shop { overflow-x: clip; }
+  .compare { scrollbar-width: none; -ms-overflow-style: none; }
+  .compare::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .compare th, .compare td { padding: 14px 16px; font-size: 15px; }
 
   .knob__lbl { font-size: 10px; }
