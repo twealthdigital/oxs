@@ -329,8 +329,14 @@ html.cart-open { overflow: hidden; }
 .about__p { margin-top: 22px; max-width: 54ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.6; font-weight: 500; color: var(--body); }
 .about__p:first-of-type { margin-top: 28px; }
 .about__cta { margin-top: 34px; }
-.about__list { list-style: none; display: grid; gap: 20px; }
-.about__card { display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start; padding: 24px; border-radius: 28px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 6px 0 var(--line); transition: background-color .4s ease, border-color .4s ease, opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+.about__list { --lx: 54px; position: relative; list-style: none; display: grid; gap: 30px; }
+/* one line runs behind all three cards, showing in the gaps that join them */
+.about__list::before { content: ''; position: absolute; left: var(--lx); top: 36px; bottom: 36px; width: 4px; margin-left: -2px; border-radius: 4px; background: var(--line); transition: background-color .4s ease; }
+.about__card:nth-child(1) { --off: -26px; }
+.about__card:nth-child(2) { --off: 30px; }
+.about__card:nth-child(3) { --off: -10px; }
+.about__card { position: relative; z-index: 1; translate: var(--off, 0px) 0; display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start; padding: 24px; border-radius: 28px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 6px 0 var(--line); transition: background-color .4s ease, border-color .4s ease, opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1), translate .55s cubic-bezier(.3,1.3,.5,1); }
+.about__card:hover, .about__card:focus-within { translate: 0 0; }
 .about__ic { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--soft); color: var(--accent); }
 .about__ic .ic { width: 28px; height: 28px; stroke-width: 2.2; }
 .about__card h3 { font-size: 22px; font-weight: 700; color: var(--ink); }
@@ -397,8 +403,12 @@ html.cart-open { overflow: hidden; }
   .topbar .logo { font-size: 28px; }
   .topnav { display: none; }
   .shop { padding: 8vh 7vw 150px; }
-  .about { padding: 0 7vw 150px; }
+  .about { padding: 0 7vw 150px; overflow-x: clip; }
   .about__in { grid-template-columns: 1fr; gap: 36px; padding-top: 8vh; }
+  .about__list { --lx: 44px; gap: 26px; }
+  .about__card:nth-child(1) { --off: -12px; }
+  .about__card:nth-child(2) { --off: 14px; }
+  .about__card:nth-child(3) { --off: -5px; }
   .about__card { padding: 18px; grid-template-columns: 52px 1fr; gap: 14px; border-radius: 24px; }
   .about__ic { width: 52px; height: 52px; }
   .about__card h3 { font-size: 20px; }
