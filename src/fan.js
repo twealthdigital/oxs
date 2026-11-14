@@ -21,14 +21,14 @@ function placeWire(mesh, idx, a, b) {
 
 const pts = (arr) => arr.map(([x, y]) => new THREE.Vector2(x, y));
 
-export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
+export function createFan({ canvas, isMobile, reduced, layout: sharedLayout, face = false }) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !isMobile,
     alpha: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : face ? 1.5 : 1.75));
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -51,7 +51,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
   key.castShadow = true;
   const sc = key.shadow.camera;
   sc.left = -5.5; sc.right = 5.5; sc.top = 5.5; sc.bottom = -5.5; sc.near = 1; sc.far = 40;
-  key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+  key.shadow.mapSize.set(isMobile || face ? 1024 : 2048, isMobile || face ? 1024 : 2048);
   key.shadow.bias = -0.0006;
   key.shadow.radius = 5;
   key.shadow.normalBias = 0.02;
@@ -85,7 +85,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
   const joint = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 20), plastic);
   joint.position.y = -0.4;
   stand.add(neck, collar, joint);
-  stand.visible = !isMobile;
+  stand.visible = !isMobile && !face;
   fan.add(stand);
 
   // the head sits on a swivel at the top of the stand: it turns about the neck's own axis, like a real oscillating fan
@@ -262,7 +262,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
 
   // desktop: only hovering the fan itself makes its head follow the cursor; elsewhere it just oscillates
   const YAW_MAX = 0.9;
-  if (!isMobile && !reduced) {
+  if (!isMobile && !reduced && !face) {
     addEventListener(
       'pointermove',
       (e) => {
@@ -290,11 +290,16 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
     const H = canvas.clientHeight;
     if (!W || !H) return;
     renderer.setSize(W, H, false);
-    const mobile = W < 769;
+    const mobile = !face && W < 769;
 
     // diameter of the guard on screen, and where its centre sits
     let diam, cx, cy;
-    if (mobile) {
+    if (face) {
+      // face-only copy (FAQ): the head alone, tucked to the right so its breeze can blow left
+      diam = Math.min(W * 0.66, H * 0.5);
+      cx = W - diam / 2 - 6;
+      cy = H * 0.5;
+    } else if (mobile) {
       diam = W * 2.1; // zoomed right in: mostly just the face
       cx = W * 0.72;
       cy = H * 0.42;
@@ -318,8 +323,8 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
     layout.w = W;
     layout.h = H;
 
-    cfg.y = mobile ? -0.25 : 0;
-    cfg.tilt = mobile ? 0.12 : 0;
+    cfg.y = face ? -0.5 : mobile ? -0.25 : 0; // the face copy looks left, toward the FAQ
+    cfg.tilt = face ? 0.04 : mobile ? 0.12 : 0;
     dirty = true;
     if (reduced) render();
   }
@@ -334,7 +339,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
     // a running fan oscillates side to side; on desktop the swing is wide and slow like a real one
     const run = Math.min(1, omega / LEVELS[1]);
     sweep += dt * (isMobile ? 0.55 : 0.75) * run;
-    const sweepAmt = Math.sin(sweep) * (isMobile ? 0.12 : 0.62) * run;
+    const sweepAmt = Math.sin(sweep) * (face ? 0.3 : isMobile ? 0.12 : 0.62) * run;
 
     // hovering the fan makes it look at the cursor; letting go resumes the oscillation
     const wantY = hovering ? ptr.x * YAW_MAX : cfg.y + sweepAmt;

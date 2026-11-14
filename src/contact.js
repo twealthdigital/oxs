@@ -233,3 +233,41 @@ faqItems.forEach((it) => {
     }
   });
 });
+
+/* ---------- FAQ: a second copy of the hero fan (face only), blowing a level 1 breeze ---------- */
+const ffan = document.querySelector('.faqfan');
+if (ffan) {
+  const wide = matchMedia('(min-width: 1280px)');
+  const cv = document.createElement('canvas');
+  cv.className = 'faqfan__cv';
+  ffan.prepend(cv);
+  let api = null, loading = false, seen = false, running = false, lastT = 0;
+  const dark = () => document.documentElement.dataset.theme === 'dark';
+  const loop = (now) => {
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
+    api.update(dt);
+    if (seen && wide.matches) requestAnimationFrame(loop);
+    else running = false;
+  };
+  const go = () => {
+    if (!api || running || !seen || !wide.matches) return;
+    running = true;
+    lastT = performance.now();
+    requestAnimationFrame(loop);
+  };
+  const init = async () => {
+    if (api || loading || !wide.matches) return;
+    loading = true;
+    const m = await import('./fan.js');
+    api = m.createFan({ canvas: cv, isMobile: false, reduced, face: true });
+    api.setLevel(1);
+    api.setTheme(dark());
+    if (reduced) api.update(0);
+    go();
+  };
+  new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) { init(); go(); } }, { rootMargin: '200px' }).observe(ffan);
+  wide.addEventListener('change', () => { if (wide.matches) { init(); if (api) api.resize(); go(); } });
+  new ResizeObserver(() => { if (api) api.resize(); }).observe(ffan);
+  new MutationObserver(() => { if (api) api.setTheme(dark()); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
