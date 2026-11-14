@@ -305,6 +305,21 @@ html.cart-open { overflow: hidden; }
 .knob { transition: opacity .3s ease, visibility .3s ease; }
 .knob.is-away { opacity: 0; visibility: hidden; pointer-events: none; }
 
+/* shop pagination */
+.pcard.is-off { display: none; }
+.pcard.page-in { animation: pcard-in .5s cubic-bezier(.2,.8,.2,1); }
+@keyframes pcard-in { from { opacity: 0; transform: translateY(18px); } }
+.cards { scroll-margin-top: 90px; }
+.pager { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 36px; }
+.pager[hidden] { display: none; }
+.pager__b { display: grid; place-items: center; min-width: 46px; height: 46px; padding: 0 6px; border: 2px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 0 var(--line); -webkit-tap-highlight-color: transparent; transition: transform .15s ease, box-shadow .15s ease, background-color .25s ease, color .25s ease, border-color .25s ease; }
+.pager__b:hover:not(:disabled) { color: var(--accent); transform: translateY(-2px); }
+.pager__b:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--line); }
+.pager__b.is-on { background: var(--btn); border-color: var(--btn); color: #fff; box-shadow: 0 4px 0 var(--btn-edge); }
+.pager__b:disabled { opacity: .4; cursor: default; }
+.pager__b:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.pager__arrow .ic { width: 20px; height: 20px; stroke-width: 2.8; }
+
 @media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } }
 
 @media (min-width: 769px) {
@@ -369,8 +384,19 @@ html.cart-open { overflow: hidden; }
   .topnav { display: none; }
   .shop { padding: 8vh 7vw 150px; }
   .cards { grid-template-columns: 1fr; gap: 18px; margin-top: 5vh; }
-  .pcard { min-height: 380px; padding: 22px; }
-  .pcard__body { margin-top: 170px; }
+  /* product cards on mobile: picture on the left, details on the right, 3 per page */
+  .pcard { display: grid; grid-template-columns: 38% 1fr; align-items: center; gap: 16px; min-height: 0; padding: 16px; border-radius: 24px; }
+  .pcard:hover, .pcard:focus-within { transform: none; box-shadow: 0 6px 0 var(--line); }
+  .pcard__img { position: relative; top: auto; right: auto; width: 100%; }
+  .pcard:hover .pcard__img, .pcard:focus-within .pcard__img { transform: scale(1.06); }
+  .pcard__tag { top: 12px; left: 12px; padding: 3px 10px; font-size: 11px; }
+  .pcard__body { margin-top: 0; min-width: 0; }
+  .pcard h3 { font-size: 19px; line-height: 1.15; }
+  .pcard p { margin-top: 4px; font-size: 14px; line-height: 1.35; }
+  .pcard__meta { margin-top: 6px; font-size: 13px; }
+  .pcard__foot { margin-top: 12px; }
+  .pcard__price { font-size: 25px; }
+  .pager { margin-top: 28px; }
   .compare th, .compare td { padding: 14px 16px; font-size: 15px; }
 
   .knob__lbl { font-size: 10px; }
