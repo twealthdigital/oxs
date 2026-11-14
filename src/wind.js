@@ -34,7 +34,7 @@ export function splitLetters() {
     for (const ch of text) {
       const s = document.createElement('span');
       s.className = 'ch';
-      s.textContent = ch;
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
       line.appendChild(s);
     }
   });

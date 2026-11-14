@@ -25,6 +25,13 @@
   --tray-in: rgba(18, 55, 168, .22);
   --tray-edge: #c3d0f2;
   --plate: #f3f6ff;
+  --bg-rgb: 255, 255, 255;
+  --kn-plate: #0a1740;
+  --kn-edge: #050d2a;
+  --kn-text: #c9d6ff;
+  --kn-lbl: #7186c4;
+  --kn-active: #8fb0ff;
+  --kn-mark: #1f5bff;
   --fan-op: .85;
   --h: 76px;
   color-scheme: light;
@@ -56,6 +63,13 @@
   --tray-in: rgba(0, 4, 24, .7);
   --tray-edge: #14286a;
   --plate: #0d1c52;
+  --bg-rgb: 6, 15, 43;
+  --kn-plate: #e8efff;
+  --kn-edge: #b9c8f0;
+  --kn-text: #0a1740;
+  --kn-lbl: #6f80b6;
+  --kn-active: #1f5bff;
+  --kn-mark: #ffffff;
   --fan-op: .9;
   color-scheme: dark;
 }
@@ -106,7 +120,7 @@ body { overflow-x: hidden; }
 [data-wind] { transform-origin: 50% 0; will-change: transform; }
 
 .headline { font-size: clamp(40px, min(7vw, 10.4vh), 120px); line-height: .98; font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
-.line { display: block; width: fit-content; transform-origin: 20% 0; }
+.line { white-space: nowrap; display: block; width: fit-content; transform-origin: 20% 0; }
 .line--blue { color: var(--accent); }
 .ch { display: inline-block; transform-origin: 50% 0; }
 .lede { margin-top: clamp(12px, 2.2vh, 22px); max-width: 32ch; font-size: clamp(15px, min(1.4vw, 2.4vh), 20px); line-height: 1.5; color: var(--body); }
@@ -118,15 +132,15 @@ body { overflow-x: hidden; }
 .stat__label { display: block; margin-top: 6px; font-size: 16px; color: var(--body); }
 
 /* rotary speed knob, bottom right */
-.knob { --k: 160px; position: absolute; right: 4vw; bottom: 3vh; z-index: 6; width: var(--k); height: var(--k); }
-.knob::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--plate); border: 2px solid var(--line); box-shadow: 0 5px 0 var(--line), 0 14px 22px var(--clay-drop); }
+.knob { --k: 138px; position: absolute; right: 4vw; bottom: 3vh; z-index: 6; width: var(--k); height: var(--k); }
+.knob::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--kn-plate); border: 2px solid var(--kn-edge); box-shadow: 0 5px 0 var(--kn-edge), 0 14px 22px var(--clay-drop); }
 .knob__ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.knob__ring text { font: 600 12.5px 'Fredoka', ui-rounded, system-ui, sans-serif; fill: var(--body); }
-.knob__lbl { position: absolute; left: 50%; top: 50%; font-size: 13px; font-weight: 600; color: var(--muted); transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--k) * -0.315)) rotate(calc(var(--a) * -1)); transition: color .25s ease; }
-.knob[data-level='0'] [data-l='0'], .knob[data-level='1'] [data-l='1'], .knob[data-level='2'] [data-l='2'], .knob[data-level='3'] [data-l='3'] { color: var(--accent); }
+.knob__ring text { font: 600 15px 'Fredoka', ui-rounded, system-ui, sans-serif; fill: var(--kn-text); }
+.knob__lbl { position: absolute; left: 50%; top: 50%; font-size: 12px; font-weight: 600; color: var(--kn-lbl); transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--k) * -0.315)) rotate(calc(var(--a) * -1)); transition: color .25s ease; }
+.knob[data-level='0'] [data-l='0'], .knob[data-level='1'] [data-l='1'], .knob[data-level='2'] [data-l='2'], .knob[data-level='3'] [data-l='3'] { color: var(--kn-active); }
 .knob__btn { position: absolute; left: 50%; top: 50%; width: 38%; aspect-ratio: 1; transform: translate(-50%, -50%); padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .knob__cap { position: absolute; inset: 0; border-radius: 50%; transform: rotate(var(--r, -135deg)); background: radial-gradient(circle at 35% 28%, var(--clay-1), var(--clay-2) 70%); box-shadow: 0 6px 0 var(--clay-edge), 0 12px 14px var(--clay-drop), inset 0 3px 0 var(--clay-hi), inset 0 -5px 8px var(--clay-lo); transition: transform .6s cubic-bezier(.34,1.5,.5,1), scale .12s ease, box-shadow .12s ease; }
-.knob__mark { position: absolute; left: 50%; top: 9%; width: 9%; height: 24%; margin-left: -4.5%; border-radius: 999px; background: var(--accent); }
+.knob__mark { position: absolute; left: 50%; top: 9%; width: 9%; height: 24%; margin-left: -4.5%; border-radius: 999px; background: var(--kn-mark); }
 .knob__btn:active .knob__cap { scale: .94; box-shadow: 0 2px 0 var(--clay-edge), 0 4px 6px var(--clay-drop), inset 0 3px 0 var(--clay-hi), inset 0 -5px 8px var(--clay-lo); }
 
 /* theme switch, fixed bottom left */
@@ -144,32 +158,41 @@ body { overflow-x: hidden; }
 @media (max-height: 660px) { .col--right { display: none; } }
 
 @media (max-width: 768px) {
-  :root { --h: 64px; --fan-op: .6; }
-  :root[data-theme='dark'] { --fan-op: .7; }
+  :root { --h: 64px; --fan-op: .5; }
+  :root[data-theme='dark'] { --fan-op: .6; }
   .logo { font-size: 34px; }
   .btn { padding: 13px 22px; font-size: 16px; }
   .btn--ghost { padding: 11px 20px; }
   .hero__tint { background: radial-gradient(circle at 72% 40%, rgba(var(--glow), .13), transparent 60%); }
 
-  /* nav becomes a fixed bottom taskbar */
-  .nav { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 30; gap: 0; padding: 6px; border-radius: 24px; justify-content: space-around; }
-  .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 8px 4px 7px; border-radius: 18px; font-size: 12px; }
+  /* nav: a taskbar docked flush to the bottom of the screen */
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; gap: 0; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)); border-radius: 22px 22px 0 0; border-width: 2px 0 0; box-shadow: 0 -8px 22px rgba(var(--glow), .1); justify-content: space-around; }
+  .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 8px 4px 7px; border-radius: 18px; font-size: 12px; font-weight: 600; }
   .nav .ic { display: block; width: 22px; height: 22px; }
   .nav__pill { border-radius: 18px; }
 
-  .hero__content { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4svh; padding: calc(var(--h) + 6svh) 7vw 150px; }
+  /* soft page-coloured fade rising from the bottom, so the fan never competes with the controls */
+  body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; height: max(260px, 34svh); pointer-events: none;
+    background: linear-gradient(to top, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .94) 38%, rgba(var(--bg-rgb), .6) 66%, rgba(var(--bg-rgb), 0) 100%);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%); mask-image: linear-gradient(to top, #000 55%, transparent 100%); }
+
+  /* a veil behind the copy keeps the text clear of the fan */
+  .hero__content::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to bottom, rgba(var(--bg-rgb), .8) 0%, rgba(var(--bg-rgb), .62) 50%, rgba(var(--bg-rgb), 0) 82%); }
+
+  .hero__content { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 7svh; padding: calc(var(--h) + 8svh) 7vw 170px; }
   .col--left { max-width: 100%; width: 100%; }
   .headline { font-size: clamp(36px, 11.5vw, 56px); }
-  .lede { max-width: 30ch; margin-top: 2.4svh; }
-  .cta { margin-top: 3svh; }
+  .lede { max-width: 30ch; margin-top: 4svh; font-size: 16px; font-weight: 500; color: var(--ink); }
+  .cta { margin-top: 4.5svh; }
   .col--right { display: flex; flex-direction: row; width: 100%; gap: 16px; }
   .stat { flex: 1; border-bottom: 0; padding-bottom: 0; }
   .num { font-size: clamp(30px, 9vw, 44px); }
-  .stat__label { font-size: 13px; }
+  .stat__label { font-size: 13px; font-weight: 500; color: var(--ink); }
 
-  .knob { --k: 124px; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
-  .knob__ring text, .knob__lbl { font-size: 12px; }
-  .theme { left: 16px; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); width: 76px; height: 40px; }
+  .knob { --k: 108px; right: 16px; bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
+  .knob__lbl { font-size: 11px; }
+  .theme { left: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); width: 76px; height: 40px; }
   .theme__thumb { width: 30px; height: 30px; }
   .theme__bg { margin-top: -9px; }
   .theme__bg--sun { left: 10px; }
