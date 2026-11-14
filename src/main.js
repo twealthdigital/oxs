@@ -1,5 +1,4 @@
 import './style.css';
-import { createFan } from './fan.js';
 import { createWind, splitLetters } from './wind.js';
 import './cart.js';
 import './shop.js';
@@ -9,7 +8,30 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 splitLetters();
 
-const fan = createFan({ canvas: document.getElementById('fan-canvas'), isMobile, reduced });
+// the 3D fan (three.js) loads in its own chunk so the page shows and works straight away
+const fanLayout = { x: 0, y: 0, r: 0, w: 0, h: 0 };
+let realFan = null;
+let fanLevel = 0;
+const fan = {
+  layout: fanLayout,
+  getFacing: () => (realFan ? realFan.getFacing() : 0),
+  setLevel(l) { fanLevel = l; realFan && realFan.setLevel(l); },
+  setTheme(d) { realFan && realFan.setTheme(d); },
+  resize() { realFan && realFan.resize(); },
+  update(dt) { realFan && realFan.update(dt); },
+};
+const fanCanvas = document.getElementById('fan-canvas');
+fanCanvas.style.transition = 'opacity .8s ease';
+fanCanvas.style.opacity = '0';
+import('./fan.js').then((m) => {
+  realFan = m.createFan({ canvas: fanCanvas, isMobile, reduced, layout: fanLayout });
+  realFan.setLevel(fanLevel);
+  realFan.setTheme(document.documentElement.dataset.theme === 'dark');
+  if (reduced) realFan.update(0);
+  wind.measure();
+  fanCanvas.style.opacity = '';
+});
+
 const wind = createWind({ layout: fan.layout, isMobile, reduced, getFacing: fan.getFacing });
 wind.measure();
 document.fonts.ready.then(() => wind.measure());

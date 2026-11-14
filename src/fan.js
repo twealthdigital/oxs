@@ -21,7 +21,7 @@ function placeWire(mesh, idx, a, b) {
 
 const pts = (arr) => arr.map(([x, y]) => new THREE.Vector2(x, y));
 
-export function createFan({ canvas, isMobile, reduced }) {
+export function createFan({ canvas, isMobile, reduced, layout: sharedLayout }) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !isMobile,
@@ -251,7 +251,7 @@ export function createFan({ canvas, isMobile, reduced }) {
   castAll(stand);
   disc.castShadow = false;
 
-  const layout = { x: 0, y: 0, r: 0, w: 0, h: 0 };
+  const layout = sharedLayout || { x: 0, y: 0, r: 0, w: 0, h: 0 };
   const cfg = { y: 0, tilt: 0 };
   const ptr = { x: 0, y: 0 };
   let omega = 0;
