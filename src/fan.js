@@ -28,7 +28,7 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout, fac
     alpha: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : face ? 1.5 : 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : face ? 1.25 : 1.75));
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -296,9 +296,9 @@ export function createFan({ canvas, isMobile, reduced, layout: sharedLayout, fac
     let diam, cx, cy;
     if (face) {
       // face-only copy (FAQ): the head alone, tucked to the right so its breeze can blow left
-      diam = Math.min(W * 0.66, H * 0.5);
-      cx = W - diam / 2 - 6;
-      cy = H * 0.5;
+      diam = Math.min(W, H) * 0.9;
+      cx = W / 2;
+      cy = H / 2;
     } else if (mobile) {
       diam = W * 2.1; // zoomed right in: mostly just the face
       cx = W * 0.72;

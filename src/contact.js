@@ -267,7 +267,28 @@ if (ffan) {
     go();
   };
   new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) { init(); go(); } }, { rootMargin: '200px' }).observe(ffan);
-  wide.addEventListener('change', () => { if (wide.matches) { init(); if (api) api.resize(); go(); } });
-  new ResizeObserver(() => { if (api) api.resize(); }).observe(ffan);
+  wide.addEventListener('change', () => { if (wide.matches) { place(); init(); go(); } });
+  // size and place the fan: its face starts a little right of the questions and runs off the right edge
+  const list = document.querySelector('.faq__list');
+  const wrap = document.querySelector('.faq__wrap');
+  const place = () => {
+    if (!wide.matches) return;
+    const wr = wrap.getBoundingClientRect();
+    const lr = list.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    const L = lr.right + 110;
+    const D = Math.min(1030, 2.2 * (vw - L));
+    const S = D / 0.9;
+    const cx = Math.max(L + D / 2, vw - D * 0.28);
+    ffan.style.width = `${S}px`;
+    ffan.style.height = `${S}px`;
+    ffan.style.left = `${cx - S / 2 - wr.left}px`;
+    ffan.style.top = `${wr.height / 2 - S / 2}px`;
+    ffan.style.setProperty('--face-left', `${(S - D) / 2}px`);
+    if (api) api.resize();
+  };
+  new ResizeObserver(place).observe(wrap);
+  addEventListener('resize', place);
+  place();
   new MutationObserver(() => { if (api) api.setTheme(dark()); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
