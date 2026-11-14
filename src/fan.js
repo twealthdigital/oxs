@@ -88,8 +88,14 @@ export function createFan({ canvas, isMobile, reduced }) {
   stand.visible = !isMobile;
   fan.add(stand);
 
+  // the head sits on a swivel at the top of the stand: it turns about the neck's own axis, like a real oscillating fan
+  const PIVOT = new THREE.Vector3(0, -0.4, -0.6);
+  const swivel = new THREE.Group();
+  swivel.position.copy(PIVOT);
+  fan.add(swivel);
   const head = new THREE.Group();
-  fan.add(head);
+  head.position.copy(PIVOT).negate();
+  swivel.add(head);
 
   const housing = new THREE.Mesh(
     new THREE.LatheGeometry(pts([[0, -1.22], [0.22, -1.2], [0.4, -1.12], [0.54, -0.98], [0.61, -0.8], [0.62, -0.6], [0.6, -0.38], [0.54, -0.2], [0.46, -0.1], [0.38, -0.04], [0.34, -0.02], [0, -0.02]]), 64).rotateX(Math.PI / 2),
@@ -98,6 +104,17 @@ export function createFan({ canvas, isMobile, reduced }) {
   const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 16).rotateX(Math.PI / 2), steel);
   shaft.position.z = 0.2;
   head.add(housing, shaft);
+
+  // swivel socket under the motor housing, directly above the stand's joint
+  const yoke = new THREE.Group();
+  const socket = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 0.26, 40), blue);
+  socket.position.y = -0.2;
+  const neckTop = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.32, 40), plastic);
+  neckTop.position.y = -0.04;
+  const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.5, 0.34), plastic);
+  bracket.position.y = 0.22;
+  yoke.add(socket, neckTop, bracket);
+  swivel.add(yoke);
 
   // smooth paddle blade: broad, rounded tip, gentle pitch and cup, no creases
   function makeBlade() {
@@ -208,20 +225,29 @@ export function createFan({ canvas, isMobile, reduced }) {
   badge.position.z = 1.034;
   head.add(cap, badge);
 
-  // blue rim + struts
+  // slim blue rim rings, plus a cage of fine side wires joining the front and back guards all the way round
   const rimGroup = new THREE.Group();
-  rimGroup.add(ring(R, 0.28, 0.05, blue), ring(R, -0.28, 0.05, blue));
-  const struts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.026, 0.026, 1, 12), blue, 8);
+  rimGroup.add(ring(R, 0.28, 0.02, blue), ring(R, -0.28, 0.02, blue));
+  const SIDE = isMobile ? 40 : 72;
+  const side = new THREE.InstancedMesh(new THREE.CylinderGeometry(wireR * 1.15, wireR * 1.15, 1, 6), steel, SIDE);
+  side.frustumCulled = false;
+  for (let i = 0; i < SIDE; i++) {
+    const a = (i / SIDE) * Math.PI * 2;
+    placeWire(side, i, new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R, -0.28), new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R, 0.28));
+  }
+  side.instanceMatrix.needsUpdate = true;
+  const struts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.014, 0.014, 1, 10), blue, 8);
   struts.frustumCulled = false;
   for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2;
+    const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
     placeWire(struts, i, new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R, -0.28), new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R, 0.28));
   }
   struts.instanceMatrix.needsUpdate = true;
-  rimGroup.add(struts);
+  rimGroup.add(side, struts);
   head.add(rimGroup);
 
   castAll(head);
+  castAll(yoke);
   castAll(stand);
   disc.castShadow = false;
 
@@ -312,10 +338,10 @@ export function createFan({ canvas, isMobile, reduced }) {
     // hovering the fan makes it look at the cursor; letting go resumes the oscillation
     const wantY = hovering ? ptr.x * YAW_MAX : cfg.y + sweepAmt;
     const wantX = hovering ? cfg.tilt + ptr.y * 0.4 : cfg.tilt;
-    const dy = wantY - head.rotation.y;
+    const dy = wantY - swivel.rotation.y;
     const dx = wantX - head.rotation.x;
     const k = Math.min(1, dt * (hovering ? 7 : 3));
-    head.rotation.y += dy * k;
+    swivel.rotation.y += dy * k;
     head.rotation.x += dx * k;
 
     if (omega > 0 || Math.abs(dx) + Math.abs(dy) > 0.0004 || dirty) {
@@ -326,7 +352,7 @@ export function createFan({ canvas, isMobile, reduced }) {
 
   // where the fan is pointing, -1 (far left) to 1 (far right); the breeze uses this
   function getFacing() {
-    return Math.max(-1, Math.min(1, (head.rotation.y - cfg.y) / YAW_MAX));
+    return Math.max(-1, Math.min(1, (swivel.rotation.y - cfg.y) / YAW_MAX));
   }
 
   function setLevel(l) {
