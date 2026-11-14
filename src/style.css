@@ -74,6 +74,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+* { -webkit-tap-highlight-color: transparent; }
 html, body { background: var(--bg); color: var(--ink); font-family: 'Fredoka', ui-rounded, 'Nunito', 'Segoe UI', system-ui, sans-serif; transition: background-color .4s ease, color .4s ease; }
 body { overflow-x: hidden; }
 .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -95,7 +96,7 @@ body { overflow-x: hidden; }
   transition: background-size .55s cubic-bezier(.65,0,.25,1), background-position .55s cubic-bezier(.65,0,.25,1), color .35s ease, box-shadow .2s ease, transform .12s ease; }
 .btn--blue { color: #fff; background-color: var(--btn); background-image: linear-gradient(var(--wipe), var(--wipe)); box-shadow: 0 5px 0 var(--btn-edge); }
 .btn--blue:hover { color: var(--wipe-text); }
-.btn--ghost { color: var(--ink); background-color: transparent; background-image: linear-gradient(var(--btn), var(--btn)); border: 2px solid var(--ghost); padding: 12px 28px; box-shadow: 0 5px 0 var(--ghost); }
+.btn--ghost { color: var(--ink); background-color: var(--surface); background-image: linear-gradient(var(--btn), var(--btn)); border: 2px solid var(--ghost); padding: 12px 28px; box-shadow: 0 5px 0 var(--ghost); }
 .btn:hover { background-position: 0 0; background-size: 100% 100%; }
 .btn--ghost:hover { color: #fff; }
 .btn:active { transform: translateY(4px); }
@@ -360,13 +361,11 @@ html.cart-open { overflow: hidden; }
   .headline { font-size: clamp(42px, 14vw, 68px); text-shadow: 0 0 14px rgba(var(--bg-rgb), .95), 0 0 3px rgba(var(--bg-rgb), .9); }
   /* soft, light fade behind the headline only; the fan still shows through */
   .headline { position: relative; }
-  .headline::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: -7vw; right: -7vw; top: -14svh; bottom: -6svh;
-    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 0) 0%, rgba(var(--bg-rgb), .5) 32%, rgba(var(--bg-rgb), .58) 70%, rgba(var(--bg-rgb), .4) 86%, rgba(var(--bg-rgb), 0) 100%); }
 
   /* header blends into the page colour (light + dark) and eases out just above the headline,
      so the header and the big text sit on a clean surface while the fan still shows below */
-  .hero::before { content: ''; position: absolute; z-index: 2; pointer-events: none; left: 0; right: 0; top: 0; height: calc(var(--h) + 17svh);
-    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 1) calc(var(--h) * .55), rgba(var(--bg-rgb), .8) calc(var(--h) + 3svh), rgba(var(--bg-rgb), .4) calc(var(--h) + 10svh), rgba(var(--bg-rgb), 0) 100%);
+  .hero::before { content: ''; position: absolute; z-index: 2; pointer-events: none; left: 0; right: 0; top: 0; height: calc(var(--h) + 66svh);
+    background: linear-gradient(to bottom, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 1) 10%, rgba(var(--bg-rgb), .93) 19%, rgba(var(--bg-rgb), .83) 29%, rgba(var(--bg-rgb), .73) 40%, rgba(var(--bg-rgb), .66) 52%, rgba(var(--bg-rgb), .6) 62%, rgba(var(--bg-rgb), .48) 72%, rgba(var(--bg-rgb), .32) 82%, rgba(var(--bg-rgb), .16) 90%, rgba(var(--bg-rgb), .05) 96%, rgba(var(--bg-rgb), 0) 100%);
     transition: background .4s ease; }
   .lede { max-width: 30ch; margin-top: 4svh; font-size: 16px; font-weight: 500; color: var(--ink); text-shadow: 0 0 10px rgba(var(--bg-rgb), .95); }
   .cta { margin-top: 4.5svh; }
