@@ -230,26 +230,27 @@ export function createFan({ canvas, isMobile, reduced }) {
   const ptr = { x: 0, y: 0 };
   let omega = 0;
   let target = 0;
-  let hoverTarget = 0;
+  let hovering = false;
   let sweep = 0;
   let dirty = true;
 
+  // desktop: only hovering the fan itself makes its head follow the cursor; elsewhere it just oscillates
+  const YAW_MAX = 0.6;
   if (!isMobile && !reduced) {
     addEventListener(
       'pointermove',
       (e) => {
-        ptr.x = e.clientX / innerWidth - 0.5;
-        ptr.y = e.clientY / innerHeight - 0.5;
-        // hovering over the fan spins the blades up; moving away lets them wind down
         const dx = e.clientX - layout.x;
         const dy = e.clientY - layout.y;
-        const d = Math.hypot(dx, dy) / (layout.r || 1);
-        hoverTarget = d < 1 ? LEVELS[2] * (1.1 - 0.4 * d) : 0;
+        const r = layout.r || 1;
+        hovering = Math.hypot(dx, dy) < r;
+        ptr.x = Math.max(-1, Math.min(1, dx / r));
+        ptr.y = Math.max(-1, Math.min(1, dy / r));
       },
       { passive: true }
     );
     document.documentElement.addEventListener('pointerleave', () => {
-      hoverTarget = 0;
+      hovering = false;
     });
   }
 
@@ -297,19 +298,23 @@ export function createFan({ canvas, isMobile, reduced }) {
   }
 
   function update(dt) {
-    const goal = Math.max(target, hoverTarget);
-    omega += (goal - omega) * (1 - Math.exp(-dt * (goal > omega ? (hoverTarget > target ? 2.6 : 1.3) : 0.9)));
-    if (goal === 0 && omega < 0.01) omega = 0;
+    // blades only turn with the speed knob, never from hovering
+    omega += (target - omega) * (1 - Math.exp(-dt * (target > omega ? 1.3 : 0.9)));
+    if (target === 0 && omega < 0.01) omega = 0;
     blades.rotation.z -= omega * dt;
     disc.material.opacity = Math.min(0.14, (omega / LEVELS[3]) * 0.14);
 
-    // a real fan sweeps slowly side to side while it runs
-    sweep += dt * 0.55 * Math.min(1, omega / LEVELS[1]);
-    const sweepAmt = Math.sin(sweep) * 0.12 * Math.min(1, omega / LEVELS[1]);
+    // a running fan oscillates side to side; on desktop the swing is wide and slow like a real one
+    const run = Math.min(1, omega / LEVELS[1]);
+    sweep += dt * (isMobile ? 0.55 : 0.75) * run;
+    const sweepAmt = Math.sin(sweep) * (isMobile ? 0.12 : 0.5) * run;
 
-    const dy = cfg.y + ptr.x * 0.7 + sweepAmt - head.rotation.y;
-    const dx = cfg.tilt + ptr.y * 0.4 - head.rotation.x;
-    const k = Math.min(1, dt * 4);
+    // hovering the fan makes it look at the cursor; letting go resumes the oscillation
+    const wantY = hovering ? ptr.x * YAW_MAX : cfg.y + sweepAmt;
+    const wantX = hovering ? cfg.tilt + ptr.y * 0.3 : cfg.tilt;
+    const dy = wantY - head.rotation.y;
+    const dx = wantX - head.rotation.x;
+    const k = Math.min(1, dt * (hovering ? 5 : 3));
     head.rotation.y += dy * k;
     head.rotation.x += dx * k;
 
@@ -317,6 +322,11 @@ export function createFan({ canvas, isMobile, reduced }) {
       render();
       dirty = false;
     }
+  }
+
+  // where the fan is pointing, -1 (far left) to 1 (far right); the breeze uses this
+  function getFacing() {
+    return Math.max(-1, Math.min(1, (head.rotation.y - cfg.y) / YAW_MAX));
   }
 
   function setLevel(l) {
@@ -345,5 +355,5 @@ export function createFan({ canvas, isMobile, reduced }) {
 
   resize();
   setTheme(document.documentElement.dataset.theme === 'dark');
-  return { layout, update, setLevel, setTheme, resize };
+  return { layout, update, setLevel, setTheme, resize, getFacing };
 }

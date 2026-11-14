@@ -8,7 +8,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 splitLetters();
 
 const fan = createFan({ canvas: document.getElementById('fan-canvas'), isMobile, reduced });
-const wind = createWind({ layout: fan.layout, isMobile, reduced });
+const wind = createWind({ layout: fan.layout, isMobile, reduced, getFacing: fan.getFacing });
 wind.measure();
 document.fonts.ready.then(() => wind.measure());
 

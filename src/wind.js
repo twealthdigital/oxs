@@ -45,7 +45,7 @@ export function splitLetters() {
   Desktop: the fan is centred, so content on its left is pushed left and content on its right is pushed right.
   Mobile: the fan sits top-right and everything is pushed down-left.
 */
-export function createWind({ layout, isMobile, reduced }) {
+export function createWind({ layout, isMobile, reduced, getFacing = () => 0 }) {
   const hero = document.getElementById('hero');
   const counts = isMobile ? STREAKS.mobile : STREAKS.desktop;
   const flutter = !isMobile;
@@ -56,6 +56,7 @@ export function createWind({ layout, isMobile, reduced }) {
   let level = 0;
   let wt = 0;
   let settled = true;
+  let facing = 0;
 
   const items = [...document.querySelectorAll('[data-wind]')].map((el) => {
     const chars = [...el.querySelectorAll('.ch')];
@@ -104,7 +105,7 @@ export function createWind({ layout, isMobile, reduced }) {
       s.dx = mobileDir.x;
       s.dy = mobileDir.y;
     } else {
-      s.dx = Math.random() < 0.5 ? -1 : 1;
+      s.dx = Math.random() < 0.5 + 0.3 * facing ? 1 : -1;
       s.dy = 0;
     }
     const spread = Math.min(layout.r, layout.h * 0.42) * 0.95;
@@ -117,7 +118,7 @@ export function createWind({ layout, isMobile, reduced }) {
     s.total = isMobile
       ? layout.h * 0.85
       : (s.dx < 0 ? s.x : layout.w - s.x) + s.len;
-    s.v = rand(0.7, 1.2) * (380 + 900 * power);
+    s.v = rand(0.7, 1.2) * (380 + 900 * power) * (isMobile ? 1 : 0.85 + 0.3 * Math.max(0, facing * s.dx));
     s.ph = rand(0, 6.28);
     s.el.style.width = s.len + 'px';
     s.el.className = Math.random() < 0.3 ? 'navy' : '';
@@ -163,6 +164,7 @@ export function createWind({ layout, isMobile, reduced }) {
     power += (target - power) * (1 - Math.exp(-dt * rate));
     if (Math.abs(target - power) < 0.0005) power = target;
 
+    if (!isMobile) facing += (getFacing() - facing) * (1 - Math.exp(-dt * 4));
     updateStreaks(dt);
     if (settled) return;
 
@@ -171,7 +173,9 @@ export function createWind({ layout, isMobile, reduced }) {
 
     for (const it of items) {
       const gu = gust(wt * it.freq, it.phase);
-      const w = power * it.infl * (0.2 + 0.8 * gu);
+      // the side the fan is facing gets the strongest breeze; the other side still feels a gentler one
+      const aim = isMobile ? 1 : 0.7 + 0.5 * clamp(facing * it.side, -1, 1);
+      const w = power * it.infl * aim * (0.2 + 0.8 * gu);
       const sd = it.side;
       spring(it.rot, -sd * w * SETTINGS.swingDeg, dt);
       spring(it.skew, sd * w * SETTINGS.skewDeg, dt);
@@ -183,7 +187,7 @@ export function createWind({ layout, isMobile, reduced }) {
       if (flutter) {
         for (const L of it.letters) {
           const gl = gust(wt * 1.35 * it.freq, L.phase);
-          const a = power * it.infl * L.f * (0.2 + 0.8 * gl);
+          const a = power * it.infl * aim * L.f * (0.2 + 0.8 * gl);
           L.el.style.transform = `translate3d(${(sd * a * 10).toFixed(1)}px,0,0) rotate(${(-sd * a * SETTINGS.letterDeg).toFixed(2)}deg) skewX(${(sd * a * SETTINGS.letterDeg * 0.7).toFixed(2)}deg)`;
         }
       }
