@@ -158,8 +158,8 @@ body { overflow-x: hidden; }
 @media (max-height: 660px) { .col--right { display: none; } }
 
 @media (max-width: 768px) {
-  :root { --h: 64px; --fan-op: .5; }
-  :root[data-theme='dark'] { --fan-op: .6; }
+  :root { --h: 64px; --fan-op: .85; }
+  :root[data-theme='dark'] { --fan-op: .9; }
   .logo { font-size: 34px; }
   .btn { padding: 13px 22px; font-size: 16px; }
   .btn--ghost { padding: 11px 20px; }
@@ -172,13 +172,10 @@ body { overflow-x: hidden; }
   .nav__pill { border-radius: 18px; }
 
   /* soft page-coloured fade rising from the bottom, so the fan never competes with the controls */
-  body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; height: max(260px, 34svh); pointer-events: none;
-    background: linear-gradient(to top, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .94) 38%, rgba(var(--bg-rgb), .6) 66%, rgba(var(--bg-rgb), 0) 100%);
+  body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; height: var(--fade-h, 40svh); pointer-events: none;
+    background: linear-gradient(to top, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .92) 35%, rgba(var(--bg-rgb), .5) 70%, rgba(var(--bg-rgb), 0) 100%);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%); mask-image: linear-gradient(to top, #000 55%, transparent 100%); }
-
-  /* a veil behind the copy keeps the text clear of the fan */
-  .hero__content::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to bottom, rgba(var(--bg-rgb), .92) 0%, rgba(var(--bg-rgb), .75) 50%, rgba(var(--bg-rgb), 0) 82%); }
+    -webkit-mask-image: linear-gradient(to top, #000 45%, transparent 100%); mask-image: linear-gradient(to top, #000 45%, transparent 100%); }
 
   .hero__content { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 7svh; padding: calc(var(--h) + 8svh) 7vw 170px; }
   .col--left { max-width: 100%; width: 100%; }

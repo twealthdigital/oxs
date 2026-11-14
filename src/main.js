@@ -94,6 +94,17 @@ function setTheme(dark, save) {
 themeBtn.addEventListener('click', () => setTheme(root.dataset.theme !== 'dark', true));
 setTheme(root.dataset.theme === 'dark', false);
 
+// mobile bottom fade rises only as far as the CTA buttons
+const cta = document.querySelector('.cta');
+function setFade() {
+  const r = cta.getBoundingClientRect();
+  root.style.setProperty('--fade-h', Math.max(180, innerHeight - r.bottom + 8) + 'px');
+}
+setFade();
+document.fonts.ready.then(setFade);
+addEventListener('load', setFade);
+addEventListener('resize', setFade);
+
 // count-up stats
 document.querySelectorAll('[data-count]').forEach((el) => {
   const to = Number(el.dataset.count);
