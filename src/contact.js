@@ -292,3 +292,11 @@ if (ffan) {
   place();
   new MutationObserver(() => { if (api) api.setTheme(dark()); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
+
+/* ---------- footer: visitor's local time ---------- */
+const clock = document.getElementById('sf-time');
+if (clock) {
+  const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
+  tick();
+  setInterval(tick, 30000);
+}

@@ -407,20 +407,47 @@ html.cart-open { overflow: hidden; }
 .faq__item.is-open .faq__a { grid-template-rows: 1fr; }
 .faq__a p { padding: 0 24px 22px; max-width: 60ch; font-size: 17px; line-height: 1.55; font-weight: 500; color: var(--body); }
 
-/* the one footer */
-.sitefoot { max-width: 1240px; margin: 14vh auto 0; padding-top: 28px; border-top: 2px solid var(--line); overflow: hidden; }
-.sitefoot__row { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.sitefoot__brand { font-size: 36px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
-.sitefoot__nav { display: flex; gap: 8px; flex-wrap: wrap; }
-.sitefoot__nav a { padding: 8px 18px; border-radius: 999px; color: var(--body); font-size: 16px; font-weight: 500; text-decoration: none; transition: background-color .25s ease, color .25s ease; }
-.sitefoot__nav a:hover { background: var(--soft); color: var(--accent); }
-.totop { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--btn); color: #fff; box-shadow: 0 4px 0 var(--btn-edge); transition: transform .15s ease, box-shadow .15s ease; }
-.totop .ic { width: 22px; height: 22px; stroke-width: 2.6; }
+/* the one footer: a rounded panel with the links, and the wordmark cropped at its bottom edge */
+.sitefoot { max-width: 1240px; margin: 14vh auto 0; }
+.sf__panel { container-type: inline-size; position: relative; overflow: hidden; border-radius: 44px; background: var(--soft); transition: background-color .4s ease; }
+.sf__top { display: grid; grid-template-columns: 1.5fr .7fr 1.2fr 1fr 1.3fr; gap: 36px; padding: 52px 52px 0; }
+.sf__tag { max-width: 17ch; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.25; font-weight: 600; color: var(--ink); }
+.sf__col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 16px; font-weight: 500; color: var(--body); }
+.sf__col h4 { margin-bottom: 6px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.sf__col a { position: relative; color: var(--body); text-decoration: none; transition: color .2s ease; overflow-wrap: anywhere; }
+.sf__col a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s ease; }
+.sf__col a:hover { color: var(--accent); }
+.sf__col a:hover::after { transform: scaleX(1); }
+.sf__col span { font-size: 14px; color: var(--muted); }
+.sf__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.sf__col .sf__chips a { padding: 7px 14px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line); font-size: 14px; font-weight: 600; color: var(--ink); transition: transform .2s ease, border-color .2s ease, color .2s ease; }
+.sf__col .sf__chips a::after { display: none; }
+.sf__col .sf__chips a:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+.sf__cta { display: flex; flex-direction: column; gap: 22px; }
+.sf__big { display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--ink); text-decoration: none; }
+.sf__big span { display: flex; flex-direction: column; gap: 2px; }
+.sf__big b { font-size: clamp(19px, 1.6vw, 24px); font-weight: 600; transition: color .2s ease; }
+.sf__big small { font-size: 14px; font-weight: 500; color: var(--muted); }
+.sf__big:hover b { color: var(--accent); }
+.sf__arrow { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--surface); transition: transform .3s cubic-bezier(.3,1.3,.5,1); }
+.sf__arrow--blue { background: var(--btn); color: #fff; }
+.sf__arrow .ic { width: 18px; height: 18px; stroke-width: 2.6; }
+.sf__big:hover .sf__arrow { transform: rotate(45deg); }
+.sf__word { margin: 2cqw 0 -9cqw; font-size: 44cqw; line-height: 1; font-weight: 700; letter-spacing: -.04em; text-align: center; color: var(--ink); user-select: none; white-space: nowrap; transition: color .4s ease; }
+.sf__word span { color: var(--btn); }
+.sf__bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 22px 52px 32px; font-size: 14px; font-weight: 500; color: var(--body); }
+.sf__bar p { display: flex; gap: 22px; }
+.sf__bar a { color: var(--body); text-decoration: none; }
+.sf__bar p a:hover { color: var(--accent); }
+.sf__meta { display: flex; align-items: center; gap: 22px; }
+.sf__status { display: inline-flex; align-items: center; gap: 8px; }
+.sf__status i { width: 9px; height: 9px; border-radius: 50%; background: #19b36b; box-shadow: 0 0 0 4px rgba(25, 179, 107, .18); }
+.sf__time:empty { display: none; }
+.totop { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--btn); color: #fff !important; box-shadow: 0 4px 0 var(--btn-edge); transition: transform .15s ease, box-shadow .15s ease; }
+.totop .ic { width: 20px; height: 20px; stroke-width: 2.6; }
 .totop:hover { transform: translateY(-3px); }
 .totop:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-edge); }
-.sitefoot a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.sitefoot__word { margin: 4vh 0 0; font-size: clamp(110px, 28vw, 380px); line-height: .78; font-weight: 700; letter-spacing: -.03em; text-align: center; color: var(--soft); user-select: none; transition: color .4s ease; }
-.sitefoot__fine { padding: 18px 0 28px; text-align: center; font-size: 14px; font-weight: 500; color: var(--body); }
+.sitefoot a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 
 /* breeze fan beside the FAQ: only where there is room for it */
 .faq__wrap { position: relative; }
@@ -451,7 +478,7 @@ html.cart-open { overflow: hidden; }
 @keyframes faq-sway { 0%, 100% { translate: 0 0; } 50% { translate: -3px 0; } }
 @media (prefers-reduced-motion: reduce) { .faqfan *, .faq__item { animation: none !important; } }
 
-@media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } .about__in { grid-template-columns: 1fr; } .contact__top { grid-template-columns: 1fr; } }
+@media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } .about__in { grid-template-columns: 1fr; } .contact__top { grid-template-columns: 1fr; } .sf__top { grid-template-columns: 1fr 1fr 1fr; } .sf__tag { grid-column: 1 / -1; max-width: 30ch; } .sf__cta { grid-column: 1 / -1; flex-direction: row; gap: 40px; } .sf__big { flex: 1; } }
 
 @media (min-width: 769px) {
   /* the fan fades out toward the text column so headline, copy and buttons never fight it */
@@ -524,7 +551,15 @@ html.cart-open { overflow: hidden; }
   .faq__q { padding: 16px 18px; font-size: 18px; }
   .faq__a p { padding: 0 18px 18px; font-size: 16px; }
   .sitefoot { margin-top: 9vh; }
-  .sitefoot__fine { padding-bottom: 150px; }
+  .sf__panel { border-radius: 30px; }
+  .sf__top { grid-template-columns: 1fr 1fr; gap: 28px 20px; padding: 30px 22px 0; }
+  .sf__tag { grid-column: 1 / -1; font-size: 22px; }
+  .sf__col:nth-of-type(3) { grid-column: 1 / -1; }
+  .sf__cta { grid-column: 1 / -1; flex-direction: column; gap: 18px; }
+  .sf__word { margin: 9cqw 0 -9cqw; }
+  .sf__bar { flex-direction: column; align-items: flex-start; padding: 20px 6px 150px; }
+  .sf__meta { width: 100%; flex-wrap: wrap; gap: 14px; }
+  .sf__meta .totop { margin-left: auto; }
   .about { padding-bottom: 12vh; }
   .about__in { grid-template-columns: 1fr; gap: 36px; padding-top: 8vh; }
   .about__list { --lx: 44px; gap: 26px; }
