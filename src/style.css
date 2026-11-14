@@ -422,6 +422,37 @@ html.cart-open { overflow: hidden; }
 .sitefoot__word { margin: 4vh 0 0; font-size: clamp(110px, 28vw, 380px); line-height: .78; font-weight: 700; letter-spacing: -.03em; text-align: center; color: var(--soft); user-select: none; transition: color .4s ease; }
 .sitefoot__fine { padding: 18px 0 28px; text-align: center; font-size: 14px; font-weight: 500; color: var(--body); }
 
+/* breeze fan beside the FAQ: only where there is room for it */
+.faq__wrap { position: relative; }
+.faqfan { display: none; }
+@media (min-width: 1280px) {
+  .faqfan { display: flex; align-items: center; justify-content: flex-end; position: absolute; top: 0; bottom: 0; right: 0; width: 300px; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24%, #000 76%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 24%, #000 76%, transparent 100%); }
+  .faqfan svg { width: 190px; height: 190px; overflow: visible; filter: drop-shadow(0 10px 0 var(--line)); }
+  .faqfan__blades { transform-box: view-box; transform-origin: 100px 100px; animation: faqfan-spin 1.5s linear infinite; }
+  .faqfan__blades path { fill: var(--btn); }
+  .faqfan__guard { fill: none; stroke: var(--ink); stroke-opacity: .28; stroke-width: 2; }
+  .faqfan__guard circle { stroke-opacity: .6; }
+  .faqfan__guard .g-outer { stroke-opacity: 1; stroke-width: 6; fill: none; stroke: var(--line); }
+  .faqfan__hub { fill: var(--ink); stroke: var(--surface); stroke-width: 5; }
+  .faqfan__wind { position: absolute; right: 204px; top: 50%; width: 92px; height: 170px; transform: translateY(-50%); }
+  .faqfan__wind i { position: absolute; right: 0; height: 4px; border-radius: 4px; background: linear-gradient(to left, rgba(var(--glow), .55), rgba(var(--glow), 0)); opacity: 0; animation: faqfan-blow 2.6s ease-out infinite; }
+  .faqfan__wind i:nth-child(1) { top: 8%; width: 70px; animation-delay: 0s; }
+  .faqfan__wind i:nth-child(2) { top: 29%; width: 92px; animation-delay: .7s; }
+  .faqfan__wind i:nth-child(3) { top: 50%; width: 80px; animation-delay: 1.4s; }
+  .faqfan__wind i:nth-child(4) { top: 71%; width: 92px; animation-delay: .35s; }
+  .faqfan__wind i:nth-child(5) { top: 92%; width: 66px; animation-delay: 1.9s; }
+  .faq__item { animation: faq-sway 4.8s ease-in-out infinite; }
+  .faq__item:nth-child(2) { animation-delay: -.5s; }
+  .faq__item:nth-child(3) { animation-delay: -1s; }
+  .faq__item:nth-child(4) { animation-delay: -1.5s; }
+  .faq__item:nth-child(5) { animation-delay: -2s; }
+}
+@keyframes faqfan-spin { to { transform: rotate(360deg); } }
+@keyframes faqfan-blow { 0% { opacity: 0; transform: translateX(26px); } 25% { opacity: 1; } 100% { opacity: 0; transform: translateX(-34px); } }
+@keyframes faq-sway { 0%, 100% { translate: 0 0; } 50% { translate: -3px 0; } }
+@media (prefers-reduced-motion: reduce) { .faqfan *, .faq__item { animation: none !important; } }
+
 @media (min-width: 769px) and (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } .about__in { grid-template-columns: 1fr; } .contact__top { grid-template-columns: 1fr; } }
 
 @media (min-width: 769px) {
