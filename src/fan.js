@@ -230,6 +230,7 @@ export function createFan({ canvas, isMobile, reduced }) {
   const ptr = { x: 0, y: 0 };
   let omega = 0;
   let target = 0;
+  let hoverTarget = 0;
   let sweep = 0;
   let dirty = true;
 
@@ -239,9 +240,17 @@ export function createFan({ canvas, isMobile, reduced }) {
       (e) => {
         ptr.x = e.clientX / innerWidth - 0.5;
         ptr.y = e.clientY / innerHeight - 0.5;
+        // hovering over the fan spins the blades up; moving away lets them wind down
+        const dx = e.clientX - layout.x;
+        const dy = e.clientY - layout.y;
+        const d = Math.hypot(dx, dy) / (layout.r || 1);
+        hoverTarget = d < 1 ? LEVELS[2] * (1.1 - 0.4 * d) : 0;
       },
       { passive: true }
     );
+    document.documentElement.addEventListener('pointerleave', () => {
+      hoverTarget = 0;
+    });
   }
 
   function render() {
@@ -288,8 +297,9 @@ export function createFan({ canvas, isMobile, reduced }) {
   }
 
   function update(dt) {
-    omega += (target - omega) * (1 - Math.exp(-dt * (target > omega ? 1.3 : 0.9)));
-    if (target === 0 && omega < 0.01) omega = 0;
+    const goal = Math.max(target, hoverTarget);
+    omega += (goal - omega) * (1 - Math.exp(-dt * (goal > omega ? (hoverTarget > target ? 2.6 : 1.3) : 0.9)));
+    if (goal === 0 && omega < 0.01) omega = 0;
     blades.rotation.z -= omega * dt;
     disc.material.opacity = Math.min(0.14, (omega / LEVELS[3]) * 0.14);
 
@@ -297,9 +307,9 @@ export function createFan({ canvas, isMobile, reduced }) {
     sweep += dt * 0.55 * Math.min(1, omega / LEVELS[1]);
     const sweepAmt = Math.sin(sweep) * 0.12 * Math.min(1, omega / LEVELS[1]);
 
-    const dy = cfg.y + ptr.x * 0.12 + sweepAmt - head.rotation.y;
-    const dx = cfg.tilt + ptr.y * 0.05 - head.rotation.x;
-    const k = Math.min(1, dt * 3);
+    const dy = cfg.y + ptr.x * 0.7 + sweepAmt - head.rotation.y;
+    const dx = cfg.tilt + ptr.y * 0.4 - head.rotation.x;
+    const k = Math.min(1, dt * 4);
     head.rotation.y += dy * k;
     head.rotation.x += dx * k;
 
