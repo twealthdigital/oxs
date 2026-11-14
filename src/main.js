@@ -57,22 +57,38 @@ const snap = () => {
   pill.classList.remove('instant');
 };
 let pillTimer;
-links.forEach((a) =>
-  a.addEventListener('click', (e) => {
-    e.preventDefault();
-    const from = nav.querySelector('[aria-current]');
-    if (from === a) return;
-    const o = rectOf(from);
-    const n = rectOf(a);
-    from.removeAttribute('aria-current');
-    a.setAttribute('aria-current', 'page');
-    const l = Math.min(o.l, n.l);
-    const r = Math.max(o.l + o.w, n.l + n.w);
-    place(l, r - l, n.t, n.h); // stretch across both
-    clearTimeout(pillTimer);
-    pillTimer = setTimeout(() => place(n.l, n.w, n.t, n.h), 220); // then drag to the new item
-  })
-);
+const topLinks = [...document.querySelectorAll('.topnav a')];
+let spyLock = 0;
+
+// make one nav item the current one (slides the pill, mirrors it in the sticky header)
+function activate(a) {
+  const from = nav.querySelector('[aria-current]');
+  const i = links.indexOf(a);
+  topLinks.forEach((t, j) => (j === i ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current')));
+  if (from === a) return;
+  const o = rectOf(from);
+  const n = rectOf(a);
+  from.removeAttribute('aria-current');
+  a.setAttribute('aria-current', 'page');
+  const l = Math.min(o.l, n.l);
+  const r = Math.max(o.l + o.w, n.l + n.w);
+  place(l, r - l, n.t, n.h); // stretch across both
+  clearTimeout(pillTimer);
+  pillTimer = setTimeout(() => place(n.l, n.w, n.t, n.h), 220); // then drag to the new item
+}
+
+// clicking a link scrolls to its section when it has one
+function go(e, index) {
+  const href = e.currentTarget.getAttribute('href');
+  e.preventDefault();
+  spyLock = performance.now() + 1000;
+  activate(links[index]);
+  const target = href && href.length > 1 ? document.querySelector(href) : null;
+  if (target) target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+links.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
+topLinks.forEach((a, i) => a.addEventListener('click', (e) => go(e, i)));
+document.querySelectorAll('.logo').forEach((a) => a.addEventListener('click', (e) => go(e, 0)));
 snap();
 document.fonts.ready.then(snap);
 addEventListener('resize', snap);
@@ -129,11 +145,29 @@ addEventListener('resize', () => {
 });
 addEventListener('load', () => wind.measure());
 
+// knob and fan only matter while the hero is on screen
+let heroOn = true;
+const knobWrap = document.getElementById('knob-wrap');
+new IntersectionObserver(
+  ([en]) => {
+    heroOn = en.isIntersecting;
+    knobWrap.classList.toggle('is-away', en.intersectionRatio < 0.4);
+  },
+  { threshold: [0, 0.4, 1] }
+).observe(document.getElementById('hero'));
+
+// fade sections in as they scroll into view
+const io = new IntersectionObserver(
+  (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+  { threshold: 0.12 }
+);
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
 let last = performance.now();
 function loop(now) {
   const dt = Math.min((now - last) / 1000, 1 / 20);
   last = now;
-  fan.update(dt);
+  if (heroOn) fan.update(dt);
   wind.update(dt);
   requestAnimationFrame(loop);
 }
@@ -142,7 +176,22 @@ else requestAnimationFrame(loop);
 
 // mobile: once the page scrolls past the first screen's top, the bottom nav detaches into a floating bar
 let navTimer;
+const mainHeader = document.querySelector('.header');
+const specsEl = document.getElementById('specs');
+const topbar = document.getElementById('topbar');
 function onScroll() {
+  // the first header scrolls away with the hero; once it is out of sight the full sticky header drops down
+  const stuck = scrollY > mainHeader.offsetHeight;
+  if (stuck !== root.classList.contains('is-stuck')) {
+    root.classList.toggle('is-stuck', stuck);
+    topbar.setAttribute('aria-hidden', String(!stuck));
+    topbar.querySelectorAll('a').forEach((a) => (stuck ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+  }
+  // highlight the section in view
+  if (performance.now() > spyLock) {
+    const inSpecs = specsEl.getBoundingClientRect().top < innerHeight * 0.5;
+    activate(links[inSpecs ? 1 : 0]);
+  }
   const on = scrollY > 40;
   if (on === root.classList.contains('is-scrolled')) return;
   root.classList.toggle('is-scrolled', on);

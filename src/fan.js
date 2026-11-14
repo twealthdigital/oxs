@@ -266,8 +266,9 @@ export function createFan({ canvas, isMobile, reduced }) {
     addEventListener(
       'pointermove',
       (e) => {
-        const dx = e.clientX - layout.x;
-        const dy = e.clientY - layout.y;
+        const cr = canvas.getBoundingClientRect();
+        const dx = e.clientX - (cr.left + layout.x);
+        const dy = e.clientY - (cr.top + layout.y);
         const r = layout.r || 1;
         hovering = Math.hypot(dx, dy) < r * 1.05;
         ptr.x = Math.max(-1, Math.min(1, dx / r));

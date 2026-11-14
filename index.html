@@ -12,12 +12,23 @@
   <title>OXs</title>
 </head>
 <body>
+  <header class="topbar" id="topbar" aria-hidden="true">
+    <a class="logo" href="#hero" aria-label="OXs" tabindex="-1">OXs</a>
+    <nav class="topnav" aria-label="Main (sticky)">
+      <a href="#hero" aria-current="page" tabindex="-1">Product</a>
+      <a href="#specs" tabindex="-1">Specs</a>
+      <a href="#" tabindex="-1">Reviews</a>
+      <a href="#" tabindex="-1">Support</a>
+    </nav>
+    <a class="btn btn--blue" href="#" tabindex="-1"><span>Buy now</span></a>
+  </header>
+
   <header class="header">
-    <a class="logo" href="#" aria-label="OXs">OXs</a>
+    <a class="logo" href="#hero" aria-label="OXs">OXs</a>
     <nav class="nav" aria-label="Main">
       <i class="nav__pill" aria-hidden="true"></i>
-      <a href="#" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg><span>Product</span></a>
-      <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Specs</span></a>
+      <a href="#hero" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg><span>Product</span></a>
+      <a href="#specs"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Specs</span></a>
       <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>Reviews</span></a>
       <a href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Support</span></a>
     </nav>
@@ -44,7 +55,7 @@
         <p class="lede" data-wind>Stand, desk and tower fans with quiet motors and three real speeds, delivered to your door.</p>
         <div class="cta">
           <a class="btn btn--blue" data-wind href="#"><span>Shop fans</span></a>
-          <a class="btn btn--ghost" data-wind href="#"><span>Compare models</span></a>
+          <a class="btn btn--ghost" data-wind href="#compare"><span>Compare models</span></a>
         </div>
       </div>
 
@@ -75,6 +86,38 @@
       </button>
     </div>
   </main>
+
+  <section class="specs" id="specs" aria-labelledby="specs-title">
+    <div class="specs__in">
+      <p class="eyebrow reveal">Specs</p>
+      <h2 class="specs__title reveal" id="specs-title">Quiet by design.<br /><span>Strong where it counts.</span></h2>
+      <p class="specs__lede reveal">Every OXs fan runs on a brushless motor with three real speeds, a wide sweep and a tilting head, so one fan can cool a whole room without the drone.</p>
+
+      <div class="cards">
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 10v4"/></svg></span><b class="card__num">26<i>dB</i></b><h3>Whisper-quiet motor</h3><p>Brushless DC motor, about as loud as a quiet library.</p></article>
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/></svg></span><b class="card__num">3<i>speeds</i></b><h3>Real speeds, one knob</h3><p>Low, medium and turbo, each clearly different from the last.</p></article>
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></span><b class="card__num">90<i>°</i></b><h3>Wide oscillation</h3><p>Sweeps the whole room, or hold it steady on one spot.</p></article>
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19h14"/><path d="M7 16l10-8"/><path d="M13 8h4v4"/></svg></span><b class="card__num">25<i>°</i></b><h3>Tilting head</h3><p>Angle the airflow up at the bed or down at the desk.</p></article>
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span><b class="card__num">38<i>W</i></b><h3>Low power draw</h3><p>Runs all night without a noticeable bump on the bill.</p></article>
+        <article class="card reveal"><span class="card__ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b class="card__num">5<i>yr</i></b><h3>Motor warranty</h3><p>Covered for five years, with free dispatch on replacements.</p></article>
+      </div>
+
+      <h3 class="compare__title reveal" id="compare">Compare models</h3>
+      <div class="compare reveal">
+        <table>
+          <thead><tr><th scope="col"></th><th scope="col">Desk</th><th scope="col">Stand</th><th scope="col">Tower</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Best for</th><td>Desks and shelves</td><td>Bedrooms and living rooms</td><td>Small rooms and corners</td></tr>
+            <tr><th scope="row">Height</th><td>38 cm</td><td>90 to 120 cm</td><td>105 cm</td></tr>
+            <tr><th scope="row">Airflow</th><td>14 m³/min</td><td>22 m³/min</td><td>18 m³/min</td></tr>
+            <tr><th scope="row">Noise at speed 1</th><td>26 dB</td><td>28 dB</td><td>24 dB</td></tr>
+            <tr><th scope="row">Oscillation</th><td>60°</td><td>90°</td><td>80°</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="specs__cta reveal"><a class="btn btn--blue" href="#"><span>Shop fans</span></a></div>
+    </div>
+  </section>
 
   <script type="module" src="/src/main.js"></script>
 </body>
