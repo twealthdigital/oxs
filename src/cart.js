@@ -170,7 +170,7 @@ function frames(btn) {
   const rr = `round ${r}px ${r}px ${r}px ${r}px`;
   const cs = getComputedStyle(root);
   const blue = cs.getPropertyValue('--btn').trim() || '#1f5bff';
-  const surface = cs.getPropertyValue('--surface').trim() || '#ffffff';
+  const surface = getComputedStyle(panel).getPropertyValue('--surface').trim() || '#ffffff';
   const corner = innerWidth <= 768 ? '0px 0px 0px 0px' : '28px 0px 0px 28px';
   return [
     { clipPath: `inset(${T}px ${R}px ${B}px ${L}px ${rr})`, backgroundColor: blue, offset: 0, easing: 'cubic-bezier(.3,1.35,.5,1)' }, // the button

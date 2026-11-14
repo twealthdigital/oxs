@@ -178,6 +178,9 @@ body { overflow-x: hidden; }
 .cart-back { position: fixed; inset: 0; z-index: 90; background: rgba(5, 13, 42, .5); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; }
 .cart-back.show { opacity: 1; visibility: visible; transition-delay: 0s; }
 .cart { position: fixed; top: 0; right: 0; bottom: 0; z-index: 100; width: min(440px, 100vw); display: flex; flex-direction: column; background: var(--surface); color: var(--ink); border-radius: 28px 0 0 28px; overflow: hidden; visibility: hidden; box-shadow: inset 2px 0 0 var(--line); }
+/* the drawer always uses the opposite theme: dark panel on the light page, light panel on the dark page */
+.cart { --ink: #eef3ff; --body: #a9b8e6; --muted: #5c6fb0; --line: #1a2c6b; --surface: #0c1a48; --soft: #14275f; --accent: #6f98ff; }
+:root[data-theme='dark'] .cart { --ink: #0a1740; --body: #3d4a74; --muted: #8e9bc4; --line: #dbe3f7; --surface: #ffffff; --soft: #eaf0ff; --accent: #1f5bff; }
 .cart.show { visibility: visible; }
 .cart > * { opacity: 0; transform: translateX(28px); transition: opacity .35s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
 .cart.in > * { opacity: 1; transform: none; }
