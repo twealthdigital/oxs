@@ -201,9 +201,16 @@ html { scroll-behavior: smooth; }
 .pcard__meta { display: block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--accent); }
 .pcard__foot { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; }
 .pcard__price { font-size: 30px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
-.pcard__go { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--btn); color: #fff; box-shadow: 0 4px 0 var(--btn-edge); transition: transform .15s ease, box-shadow .15s ease; }
-.pcard__go:hover { transform: translateY(-2px); }
-.pcard__go:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-edge); }
+/* add to cart: the cart rolls out, a tick rolls in saying "Added", then the cart rolls back */
+.pcard__add { position: relative; display: grid; place-items: center; width: 46px; height: 46px; border: 0; border-radius: 999px; background: var(--btn); color: #fff; font: inherit; cursor: pointer; overflow: hidden; box-shadow: 0 4px 0 var(--btn-edge); -webkit-tap-highlight-color: transparent;
+  transition: width .5s cubic-bezier(.65,0,.25,1), background-color .3s ease, box-shadow .3s ease, transform .15s ease; }
+.pcard__add > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; transition: transform .55s cubic-bezier(.65,0,.25,1), opacity .35s ease; }
+.add__done { font-size: 15px; font-weight: 600; opacity: 0; transform: translateX(70%) rotate(120deg); }
+.pcard__add:hover { transform: translateY(-2px); }
+.pcard__add:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--btn-edge); }
+.pcard__add.is-added { width: 112px; background: #19b36b; box-shadow: 0 4px 0 #0e7a47; }
+.pcard__add.is-added .add__cart { opacity: 0; transform: translateX(-70%) rotate(-120deg); }
+.pcard__add.is-added .add__done { opacity: 1; transform: none; }
 
 .compare__title { margin-top: 12vh; font-size: clamp(28px, 3.2vw, 44px); font-weight: 700; letter-spacing: -.01em; color: var(--ink); scroll-margin-top: 90px; }
 .compare { margin-top: 24px; overflow-x: auto; border-radius: 28px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 6px 0 var(--line); transition: background-color .4s ease, border-color .4s ease; }
